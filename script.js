@@ -1,100 +1,280 @@
-/* Base Styles */
-body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; overflow: hidden; background-color: #000; }
-#desktop { height: 100vh; position: relative; background-image: url('https://images.unsplash.com/photo-1506744626753-1fa44df31c22?q=80&w=2000&auto=format&fit=crop'); background-size: cover; background-position: center; transition: filter 0.2s, background-image 0.3s; }
+// --- 1. Boot Sequence & Init ---
+window.onload = function() {
+    // Hide boot screen after 2.5 seconds
+    setTimeout(() => {
+        const boot = document.getElementById('boot-screen');
+        boot.style.opacity = '0';
+        setTimeout(() => boot.style.display = 'none', 500);
 
-/* Boot Screen */
-#boot-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #202124; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; transition: opacity 0.5s ease-out; }
-.boot-logo { font-size: 80px; margin-bottom: 20px; animation: pulse 1.5s infinite; }
-.boot-text { font-size: 24px; font-weight: bold; letter-spacing: 2px; }
-.boot-loader { margin-top: 30px; width: 50px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; position: relative; overflow: hidden; }
-.boot-loader::after { content: ''; position: absolute; left: -25px; top: 0; height: 100%; width: 25px; background: #1a73e8; animation: slide 1s infinite ease-in-out; }
-@keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
-@keyframes slide { 0% { left: -25px; } 100% { left: 50px; } }
+        // Check Lock Screen after boot
+        const savedPassword = localStorage.getItem('os_password');
+        if (savedPassword) document.getElementById('lock-screen').style.display = 'flex';
+    }, 2500);
 
-/* Context Menu */
-#context-menu { position: absolute; background: rgba(32, 33, 36, 0.95); backdrop-filter: blur(10px); color: white; border-radius: 8px; padding: 5px 0; width: 200px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 10000; }
-.context-item { padding: 10px 15px; cursor: pointer; font-size: 14px; transition: 0.2s; }
-.context-item:hover { background: rgba(255, 255, 255, 0.15); }
+    // Load Data
+    const savedWallpaper = localStorage.getItem('os_wallpaper');
+    if(savedWallpaper) document.getElementById('desktop').style.backgroundImage = `url('${savedWallpaper}')`;
 
-/* Quick Settings Panel */
-#quick-settings { position: absolute; bottom: 70px; right: 2%; width: 320px; background: rgba(32, 33, 36, 0.95); border-radius: 16px; padding: 20px; color: white; backdrop-filter: blur(20px); box-shadow: 0 4px 20px rgba(0,0,0,0.5); z-index: 9999; }
-.qs-header { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 14px; color: #8ab4f8; font-weight: bold; }
-.qs-sliders { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-.qs-sliders label { font-size: 13px; }
-.qs-sliders input[type=range] { width: 100%; margin-bottom: 10px; }
-.qs-footer { display: flex; justify-content: space-between; gap: 10px; }
-.qs-footer button { flex: 1; padding: 8px; border-radius: 8px; border: none; background: rgba(255,255,255,0.1); color: white; cursor: pointer; transition: 0.2s; }
-.qs-footer button:hover { background: rgba(255,255,255,0.2); }
+    const savedApps = JSON.parse(localStorage.getItem('os_installed_apps') || '[]');
+    savedApps.forEach(app => {
+        if(!document.getElementById('taskbar-' + app.id)) restoreAppToTaskbar(app.id, app.icon, app.name);
+    });
 
-/* Lock Screen */
-#lock-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(32, 33, 36, 0.95); backdrop-filter: blur(15px); z-index: 10000; display: flex; justify-content: center; align-items: center; }
-.lock-box { text-align: center; color: white; width: 300px; }
-.avatar { font-size: 64px; margin-bottom: 10px; background: rgba(255,255,255,0.1); border-radius: 50%; width: 100px; height: 100px; line-height: 100px; margin: 0 auto 15px auto; }
-#lock-password { padding: 10px; border-radius: 20px; border: none; outline: none; width: 70%; text-align: center; margin-bottom: 10px; }
-.lock-box button { padding: 10px 15px; border-radius: 20px; border: none; background: #1a73e8; color: white; cursor: pointer; }
-#lock-error { color: #ff8a80; font-size: 12px; margin-top: 5px; display: none; }
-.forgot-link { color: #8ab4f8; font-size: 12px; margin-top: 15px; cursor: pointer; }
-.forgot-link:hover { text-decoration: underline; }
+    document.querySelectorAll('.app-icon').forEach(makeIconDraggable);
+    initBattery();
+};
 
-/* Desktop Icons */
-#desktop-icons { position: absolute; top: 20px; left: 20px; display: flex; flex-direction: column; gap: 20px; z-index: 1; }
-.desktop-icon { width: 80px; text-align: center; color: white; cursor: pointer; border-radius: 8px; padding: 10px 5px; transition: 0.2s; user-select: none; }
-.desktop-icon:hover { background: rgba(255, 255, 255, 0.2); }
-.desktop-icon .icon-emoji { font-size: 36px; margin-bottom: 5px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
-.desktop-icon .icon-text { font-size: 13px; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); }
+// --- 2. System UI (Clock, Battery, Brightness) ---
+function updateClock() {
+    const now = new Date();
+    let hours = now.getHours(), minutes = now.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12; 
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    document.getElementById('clock').innerText = hours + ':' + minutes + ' ' + ampm;
+}
+setInterval(updateClock, 1000); updateClock();
 
-/* Windows */
-.window { position: absolute; top: 80px; left: 150px; width: 600px; height: 450px; background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); display: flex; flex-direction: column; overflow: hidden; resize: both; z-index: 10; transition: opacity 0.2s; }
-.window.minimized { display: none !important; }
-.window.dragging { transition: none; opacity: 0.9; }
-.window-header { background: #f1f3f4; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; cursor: move; user-select: none; border-bottom: 1px solid #ddd; }
-.window-title { font-size: 14px; font-weight: 600; color: #3c4043; }
-.win-btn { background: transparent; border: none; cursor: pointer; font-size: 16px; font-weight: bold; color: #5f6368; transition: 0.2s; padding: 0 5px; }
-.close-btn:hover { color: #d93025; }
-.win-btn:hover:not(.close-btn) { color: #202124; }
-.window-content { flex-grow: 1; background: #fff; overflow-y: auto; display: flex; flex-direction: column; }
-#snap-preview { position: absolute; background: rgba(255, 255, 255, 0.2); border: 2px solid rgba(255, 255, 255, 0.5); border-radius: 12px; backdrop-filter: blur(5px); display: none; z-index: 999; pointer-events: none; transition: all 0.2s ease-out; }
+function initBattery() {
+    if ('getBattery' in navigator) {
+        navigator.getBattery().then(battery => {
+            function updateLevel() {
+                const level = Math.round(battery.level * 100) + '%';
+                document.getElementById('taskbar-battery').innerText = battery.charging ? '⚡' : '🔋';
+                document.getElementById('qs-battery').innerText = (battery.charging ? '⚡ ' : '🔋 ') + level;
+            }
+            updateLevel();
+            battery.addEventListener('levelchange', updateLevel);
+            battery.addEventListener('chargingchange', updateLevel);
+        });
+    }
+}
 
-/* Calculator App */
-.calc-bg { background: #202124; padding: 15px; }
-#calc-display { width: calc(100% - 20px); height: 60px; font-size: 32px; text-align: right; margin-bottom: 10px; background: #303134; color: white; border: none; border-radius: 8px; padding: 0 10px; outline: none; }
-.calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; height: calc(100% - 70px); }
-.calc-btn { background: #3c4043; color: white; border: none; border-radius: 8px; font-size: 20px; cursor: pointer; transition: 0.2s; }
-.calc-btn:hover { background: #5f6368; }
-.calc-btn.action { background: #8ab4f8; color: #202124; font-weight: bold; }
-.calc-btn.span-2 { grid-column: span 2; }
+document.getElementById('brightness-slider').addEventListener('input', function(e) {
+    // 30% to 100% brightness mapping
+    document.getElementById('desktop').style.filter = `brightness(${e.target.value}%)`;
+});
 
-/* Taskbar */
-#taskbar-container { position: absolute; bottom: 10px; width: 100%; display: flex; justify-content: center; z-index: 9999; }
-#taskbar { height: 48px; background-color: rgba(32, 33, 36, 0.75); display: flex; align-items: center; padding: 0 10px; backdrop-filter: blur(20px); border-radius: 24px; color: white; width: 90%; max-width: 1000px; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
-#launcher-btn { background: rgba(255, 255, 255, 0.1); border: none; border-radius: 50%; width: 36px; height: 36px; cursor: pointer; font-weight: bold; color: white; margin-right: auto; transition: 0.2s; }
-#launcher-btn:hover { background: rgba(255, 255, 255, 0.2); }
-#app-icons { display: flex; gap: 8px; justify-content: center; position: absolute; left: 50%; transform: translateX(-50%); }
-.app-icon { background: transparent; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 20px; cursor: pointer; transition: 0.2s; position: relative; }
-.app-icon:hover { background: rgba(255, 255, 255, 0.15); }
-.app-icon.active::after { content: ''; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); width: 16px; height: 3px; background: white; border-radius: 2px; }
-.app-icon.dragging-icon { opacity: 0.4; }
-#status-area { margin-left: auto; background: rgba(255, 255, 255, 0.1); padding: 6px 14px; border-radius: 16px; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
-#status-area:hover { background: rgba(255, 255, 255, 0.2); }
-#clock { font-size: 13px; font-weight: 500; }
+// --- 3. Context & Quick Settings Menus ---
+const desktop = document.getElementById('desktop');
+const contextMenu = document.getElementById('context-menu');
+const quickSettings = document.getElementById('quick-settings');
 
-/* Launcher Menu */
-#launcher-menu { position: absolute; bottom: 70px; left: 5%; width: 300px; background: rgba(32, 33, 36, 0.85); border-radius: 16px; padding: 10px; color: white; backdrop-filter: blur(20px); box-shadow: 0 4px 20px rgba(0,0,0,0.4); z-index: 9998; }
-#launcher-menu ul { list-style: none; padding: 0; margin: 0; }
-#launcher-menu li { padding: 10px 15px; cursor: pointer; border-radius: 8px; transition: 0.2s; }
-#launcher-menu li:hover { background: rgba(255, 255, 255, 0.15); }
+desktop.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    if(e.target === desktop || e.target.id === 'desktop-icons') {
+        contextMenu.style.display = 'block';
+        contextMenu.style.left = e.clientX + 'px';
+        contextMenu.style.top = e.clientY + 'px';
+    }
+});
 
-/* Components */
-.browser-toolbar { display: flex; padding: 8px; background: #e8eaed; border-bottom: 1px solid #ccc; gap: 5px; }
-.browser-toolbar input { flex-grow: 1; padding: 6px 12px; border-radius: 15px; border: 1px solid #ccc; outline: none; }
-.browser-toolbar button { background: #1a73e8; color: white; border: none; border-radius: 15px; padding: 5px 15px; cursor: pointer; }
-.store-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #eee; }
-.store-info { flex-grow: 1; margin-right: 15px; }
-.store-info strong { display: block; font-size: 16px; color: #202124; }
-.store-info span { font-size: 12px; color: #5f6368; }
-.install-btn { background: #1a73e8; color: white; border: none; min-width: 80px; padding: 8px 16px; border-radius: 16px; cursor: pointer; font-weight: bold; }
-.install-btn:disabled { background: #8ab4f8; cursor: not-allowed; }
-.progress-container { width: 100%; background-color: #e0e0e0; border-radius: 8px; margin-top: 8px; display: none; overflow: hidden; height: 14px; }
-.progress-bar { width: 0%; height: 100%; background-color: #1a73e8; text-align: center; line-height: 14px; color: white; font-size: 10px; font-weight: bold; transition: width 0.2s; }
-#wordpad-editor { flex-grow: 1; padding: 15px; outline: none; font-family: 'Times New Roman', Times, serif; font-size: 16px; }
-#wordpad-editor:empty:before { content: attr(placeholder); color: #888; }
+document.addEventListener('click', (e) => {
+    if(!contextMenu.contains(e.target)) contextMenu.style.display = 'none';
+    if(!quickSettings.contains(e.target) && !document.getElementById('status-area').contains(e.target)) {
+        quickSettings.style.display = 'none';
+    }
+});
+
+function toggleQuickSettings() {
+    quickSettings.style.display = quickSettings.style.display === 'none' ? 'block' : 'none';
+    document.getElementById('launcher-menu').style.display = 'none';
+}
+
+function lockSystem() {
+    const savedPassword = localStorage.getItem('os_password');
+    if (savedPassword) document.getElementById('lock-screen').style.display = 'flex';
+    else alert("You haven't set a password in Settings yet!");
+    quickSettings.style.display = 'none';
+    contextMenu.style.display = 'none';
+}
+
+// --- 4. Security Logic ---
+function unlockOS() {
+    const input = document.getElementById('lock-password').value;
+    if (input === localStorage.getItem('os_password') || input === localStorage.getItem('os_answer')) {
+        document.getElementById('lock-screen').style.display = 'none';
+        document.getElementById('lock-password').value = '';
+        document.getElementById('lock-error').style.display = 'none';
+    } else document.getElementById('lock-error').style.display = 'block';
+}
+
+function showSecurityQuestion() {
+    const hintDiv = document.getElementById('security-hint');
+    const qText = document.getElementById('lock-question-text');
+    const savedQ = localStorage.getItem('os_question');
+    qText.innerText = savedQ ? "Hint: " + savedQ : "No security question set.";
+    hintDiv.style.display = 'block';
+}
+
+function saveSecuritySettings() {
+    const pass = document.getElementById('set-password').value;
+    const q = document.getElementById('set-question').value;
+    const a = document.getElementById('set-answer').value;
+    if(pass) localStorage.setItem('os_password', pass);
+    if(q) localStorage.setItem('os_question', q);
+    if(a) localStorage.setItem('os_answer', a);
+    const msg = document.getElementById('security-save-msg');
+    msg.style.display = 'block'; setTimeout(() => msg.style.display = 'none', 3000);
+}
+
+// --- 5. Window Management ---
+let highestZ = 10;
+function toggleMenu() {
+    const menu = document.getElementById('launcher-menu');
+    menu.style.display = menu.style.display === 'none' || menu.style.display === '' ? 'block' : 'none';
+    quickSettings.style.display = 'none';
+}
+
+function openApp(appId) {
+    const appWindow = document.getElementById(appId);
+    if(appWindow) {
+        appWindow.style.display = 'flex'; appWindow.classList.remove('minimized');
+        bringToFront(appWindow); updateTaskbarIndicator(appId, true);
+    }
+    document.getElementById('launcher-menu').style.display = 'none';
+}
+
+function minimizeApp(appId) { document.getElementById(appId).classList.add('minimized'); updateTaskbarIndicator(appId, false); }
+
+function closeApp(appId) {
+    const appWindow = document.getElementById(appId);
+    appWindow.style.display = 'none'; appWindow.classList.remove('minimized');
+    updateTaskbarIndicator(appId, false);
+    const iframe = appWindow.querySelector('iframe');
+    if(iframe) { const src = iframe.src; iframe.src = ''; setTimeout(() => iframe.src = src, 10); }
+}
+
+function toggleApp(appId) {
+    const appWindow = document.getElementById(appId);
+    if (appWindow.style.display === 'flex' && !appWindow.classList.contains('minimized')) {
+        if (appWindow.style.zIndex == highestZ) minimizeApp(appId); else bringToFront(appWindow);
+    } else openApp(appId);
+}
+
+function bringToFront(elmnt) { highestZ++; elmnt.style.zIndex = highestZ; }
+function updateTaskbarIndicator(appId, isActive) {
+    const icon = document.querySelector(`button[onclick*="'${appId}'"]`);
+    if(icon) isActive ? icon.classList.add('active') : icon.classList.remove('active');
+}
+
+// Dragging & Snapping
+const snapPreview = document.getElementById('snap-preview');
+let currentSnap = null;
+document.querySelectorAll('.window').forEach(win => {
+    dragElement(win); win.addEventListener('mousedown', () => bringToFront(win));
+});
+
+function dragElement(elmnt) {
+    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    const header = document.getElementById(elmnt.id + "-header");
+    if (header) header.onmousedown = dragMouseDown;
+
+    function dragMouseDown(e) {
+        if(e.target.tagName === 'BUTTON') return;
+        e.preventDefault(); pos3 = e.clientX; pos4 = e.clientY;
+        document.onmouseup = closeDragElement; document.onmousemove = elementDrag;
+        elmnt.classList.add('dragging');
+    }
+    function elementDrag(e) {
+        e.preventDefault(); pos1 = pos3 - e.clientX; pos2 = pos4 - e.clientY; pos3 = e.clientX; pos4 = e.clientY;
+        elmnt.style.top = (elmnt.offsetTop - pos2) + "px"; elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+        const th = 20; 
+        if (e.clientX < th) { showPreview(0, 0, '50%', '100%'); currentSnap = 'left'; } 
+        else if (e.clientX > window.innerWidth - th) { showPreview('50%', 0, '50%', '100%'); currentSnap = 'right'; } 
+        else if (e.clientY < th) { showPreview(0, 0, '100%', '100%'); currentSnap = 'top'; } 
+        else { snapPreview.style.display = 'none'; currentSnap = null; }
+    }
+    function showPreview(l, t, w, h) { snapPreview.style.display = 'block'; snapPreview.style.left = l; snapPreview.style.top = t; snapPreview.style.width = w; snapPreview.style.height = h; }
+    function closeDragElement() {
+        document.onmouseup = null; document.onmousemove = null; elmnt.classList.remove('dragging'); snapPreview.style.display = 'none';
+        if (currentSnap === 'left') { elmnt.style.left = '0'; elmnt.style.top = '0'; elmnt.style.width = '50vw'; elmnt.style.height = '100vh'; } 
+        else if (currentSnap === 'right') { elmnt.style.left = '50vw'; elmnt.style.top = '0'; elmnt.style.width = '50vw'; elmnt.style.height = '100vh'; } 
+        else if (currentSnap === 'top') { elmnt.style.left = '0'; elmnt.style.top = '0'; elmnt.style.width = '100vw'; elmnt.style.height = '100vh'; }
+        currentSnap = null;
+    }
+}
+
+// --- 6. Calculator Logic ---
+let calcInput = "";
+function calcPress(val) {
+    calcInput += val;
+    document.getElementById('calc-display').value = calcInput;
+}
+function calcClear() {
+    calcInput = "";
+    document.getElementById('calc-display').value = "0";
+}
+function calcEval() {
+    try {
+        calcInput = eval(calcInput).toString();
+        document.getElementById('calc-display').value = calcInput;
+    } catch(e) { document.getElementById('calc-display').value = "Error"; calcInput = ""; }
+}
+
+// --- 7. Chrome Logic ---
+let chromeHistory = ["https://www.bing.com"], chromeIndex = 0;
+function navigateChrome() {
+    let url = document.getElementById('chrome-url').value;
+    url = url.startsWith('http') ? url : 'https://' + url;
+    chromeHistory = chromeHistory.slice(0, chromeIndex + 1); chromeHistory.push(url); chromeIndex++;
+    document.getElementById('chrome-frame').src = url; document.getElementById('chrome-url').value = url;
+}
+function chromeBack() { if (chromeIndex > 0) { chromeIndex--; document.getElementById('chrome-frame').src = chromeHistory[chromeIndex]; document.getElementById('chrome-url').value = chromeHistory[chromeIndex]; } }
+function chromeForward() { if (chromeIndex < chromeHistory.length - 1) { chromeIndex++; document.getElementById('chrome-frame').src = chromeHistory[chromeIndex]; document.getElementById('chrome-url').value = chromeHistory[chromeIndex]; } }
+function chromeReload() { const iframe = document.getElementById('chrome-frame'); iframe.src = iframe.src; }
+
+// --- 8. File Uploads & App Store ---
+document.getElementById('wallpaper-upload').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            document.getElementById('desktop').style.backgroundImage = `url('${ev.target.result}')`;
+            try { localStorage.setItem('os_wallpaper', ev.target.result); } catch(err) { alert("Image too large to save permanently, but applied for this session."); }
+        }; reader.readAsDataURL(file);
+    }
+});
+
+const taskbarIconsContainer = document.getElementById('app-icons');
+let draggedIcon = null;
+function makeIconDraggable(icon) {
+    icon.addEventListener('dragstart', function() { draggedIcon = this; setTimeout(() => this.classList.add('dragging-icon'), 0); });
+    icon.addEventListener('dragend', function() { setTimeout(() => { this.classList.remove('dragging-icon'); draggedIcon = null; }, 0); });
+    icon.addEventListener('dragover', (e) => e.preventDefault());
+    icon.addEventListener('drop', function(e) {
+        e.preventDefault();
+        if (draggedIcon !== this) {
+            let allIcons = [...taskbarIconsContainer.children];
+            allIcons.indexOf(draggedIcon) < allIcons.indexOf(this) ? this.after(draggedIcon) : this.before(draggedIcon);
+        }
+    });
+}
+
+function installApp(appId, iconSymbol, appName, buttonElement) {
+    if (document.getElementById('taskbar-' + appId)) return; 
+    const pCont = document.getElementById('progress-container-' + appId), pBar = document.getElementById('progress-bar-' + appId);
+    buttonElement.innerText = 'Installing...'; buttonElement.disabled = true; if(pCont) pCont.style.display = 'block';
+    let progress = 0;
+    const dlInterval = setInterval(() => {
+        progress += Math.floor(Math.random() * 15) + 10; 
+        if (progress >= 100) {
+            progress = 100; clearInterval(dlInterval);
+            if(pBar) { pBar.style.width = '100%'; pBar.innerText = '100%'; }
+            buttonElement.innerText = 'Installed'; if(pCont) setTimeout(() => pCont.style.display = 'none', 500);
+            restoreAppToTaskbar(appId, iconSymbol, appName); saveAppToStorage(appId, iconSymbol, appName);
+            const menuList = document.getElementById('launcher-list'), li = document.createElement('li');
+            li.innerHTML = `${iconSymbol} ${appName}`; li.onclick = () => openApp(appId); menuList.appendChild(li);
+        } else if(pBar) { pBar.style.width = progress + '%'; pBar.innerText = progress + '%'; }
+    }, 400); 
+}
+
+function restoreAppToTaskbar(appId, iconSymbol, appName) {
+    const btn = document.createElement('button'); btn.className = 'app-icon'; btn.id = 'taskbar-' + appId; btn.title = appName; btn.innerHTML = iconSymbol; btn.draggable = true; btn.onclick = () => toggleApp(appId);
+    taskbarIconsContainer.appendChild(btn); makeIconDraggable(btn);
+}
+
+function saveAppToStorage(appId, iconSymbol, appName) {
+    let savedApps = JSON.parse(localStorage.getItem('os_installed_apps') || '[]');
+    savedApps.push({ id: appId, icon: iconSymbol, name: appName }); localStorage.setItem('os_installed_apps', JSON.stringify(savedApps));
+}
