@@ -139,10 +139,14 @@ let highestZ = 10;
 function openApp(appId) {
     const appWindow = document.getElementById(appId);
     if(appWindow) {
-        // --- MEMORY FIX: Only load the iframe when opened! ---
+        // --- MEMORY FIX: Load iframe safely ---
         const iframe = appWindow.querySelector('iframe');
-        if (iframe && !iframe.src) {
-            iframe.src = iframe.getAttribute('data-src'); // Fetch from data-src
+        if (iframe) {
+            const currentSrc = iframe.getAttribute('src');
+            // If the iframe is empty or wiped, load the actual game link
+            if (!currentSrc || currentSrc === '' || currentSrc === 'about:blank') {
+                iframe.setAttribute('src', iframe.getAttribute('data-src'));
+            }
         }
 
         appWindow.style.display = 'flex'; 
@@ -153,22 +157,16 @@ function openApp(appId) {
     launcherMenu.style.display = 'none';
 }
 
-function minimizeApp(appId) { 
-    // Minimizing does NOT wipe memory. Game stays running.
-    document.getElementById(appId).classList.add('minimized'); 
-    updateTaskbarIndicator(appId, false); 
-}
-
 function closeApp(appId) {
     const appWindow = document.getElementById(appId);
     appWindow.style.display = 'none'; 
     appWindow.classList.remove('minimized');
     updateTaskbarIndicator(appId, false);
     
-    // --- MEMORY FIX: Wipe iframe completely from memory when closed ---
+    // --- MEMORY FIX: Wipe iframe to about:blank to clear RAM ---
     const iframe = appWindow.querySelector('iframe');
     if(iframe) { 
-        iframe.src = ''; 
+        iframe.setAttribute('src', 'about:blank'); 
     }
 }
 
