@@ -548,13 +548,13 @@
   <!-- Disclaimer -->
   <div class="disclaimer-overlay" id="disclaimerOverlay">
     <div class="disclaimer-box">
-      <div class="disclaimer-logo">T9 FLIX</div>
+      <div class="disclaimer-logo">Aura OS Movies</div>
       <p class="disclaimer-text">
-        T9 FLIX does not host any files on its servers. All content is provided by non-affiliated third parties.
+        Aura OS Movies is an movie website, WATCH ALL MOVIES HERE!!!
         <br><br>
         By continuing, you accept responsibility for any ads or content shown by third-party providers.
       </p>
-      <button class="disclaimer-btn" id="agreeBtn">Continue to T9 FLIX</button>
+      <button class="disclaimer-btn" id="agreeBtn">Continue to Aura Flix</button>
     </div>
   </div>
 
