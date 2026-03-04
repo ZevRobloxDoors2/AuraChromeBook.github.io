@@ -37,8 +37,8 @@
         <div id="snap-preview"></div>
 
         <div class="window" id="games-folder-window" style="display: none;">
-            <div class="window-header" id="games-folder-window-header"><span class="window-title">📁 Games</span><div><button class="win-btn" onclick="minimizeApp('games-folder-window')">−</button><button class="win-btn close-btn" onclick="closeApp('games-folder-window')">✕</button></div></div>
-            <div class="window-content" style="padding: 20px;"><p>To play games, open the App Store and install them!</p></div>
+            <div class="window-header" id="games-folder-window-header"><span class="window-title">📁 Files</span><div><button class="win-btn" onclick="minimizeApp('games-folder-window')">−</button><button class="win-btn close-btn" onclick="closeApp('games-folder-window')">✕</button></div></div>
+            <div class="window-content" style="padding: 20px;"><p>Your local files and downloaded content will appear here.</p></div>
         </div>
 
         <div class="window" id="wordpad-window" style="display: none;">
@@ -47,7 +47,7 @@
                 <button onclick="document.execCommand('undo')">↩</button><button onclick="document.execCommand('redo')">↪</button>
                 <button onclick="document.execCommand('bold')"><b>B</b></button><button onclick="document.execCommand('italic')"><i>I</i></button><button onclick="document.execCommand('underline')"><u>U</u></button>
             </div>
-            <div class="window-content"><div id="wordpad-editor" contenteditable="true" placeholder="Start typing here..."></div></div>
+            <div class="window-content"><div id="wordpad-editor" contenteditable="true" placeholder="Start typing here..." style="padding: 20px; outline: none; height: 100%;"></div></div>
         </div>
 
         <div class="window" id="calc-window" style="display: none; width: 320px; height: 480px;">
@@ -106,21 +106,44 @@
             </div>
         </div>
 
-        <div class="window" id="store-window" style="display: none;">
+        <div class="window" id="store-window" style="display: none; width: 750px; height: 550px;">
             <div class="window-header" id="store-window-header"><span class="window-title">🛍️ Play Store</span><div><button class="win-btn" onclick="minimizeApp('store-window')">−</button><button class="win-btn close-btn" onclick="closeApp('store-window')">✕</button></div></div>
-            <div class="window-content" style="padding: 20px; background: #f8f9fa;">
-                <div class="store-grid">
-                    <div class="store-card"><div class="store-icon">🐻</div><div class="store-info"><strong>Five Nights</strong><span>Game</span></div><button id="install-btn-fnae-window" class="store-btn" onclick="installApp('fnae-window', '🐻', 'Five Nights', this)">Install</button><div class="progress-container" id="progress-container-fnae-window"><div class="progress-bar" id="progress-bar-fnae-window"></div></div></div>
-                    <div class="store-card"><div class="store-icon">💬</div><div class="store-info"><strong>Discord</strong><span>App</span></div><button id="install-btn-discord-window" class="store-btn" onclick="installApp('discord-window', '💬', 'Discord', this)">Install</button><div class="progress-container" id="progress-container-discord-window"><div class="progress-bar" id="progress-bar-discord-window"></div></div></div>
-                    <div class="store-card"><div class="store-icon">⛏️</div><div class="store-info"><strong>Eaglercraft</strong><span>Game</span></div><button id="install-btn-eaglercraft-window" class="store-btn" onclick="installApp('eaglercraft-window', '⛏️', 'Eaglercraft', this)">Install</button><div class="progress-container" id="progress-container-eaglercraft-window"><div class="progress-bar" id="progress-bar-eaglercraft-window"></div></div></div>
-                    <div class="store-card"><div class="store-icon">👵</div><div class="store-info"><strong>Granny</strong><span>Game</span></div><button id="install-btn-granny-window" class="store-btn" onclick="installApp('granny-window', '👵', 'Granny', this)">Install</button><div class="progress-container" id="progress-container-granny-window"><div class="progress-bar" id="progress-bar-granny-window"></div></div></div>
-                    <div class="store-card"><div class="store-icon">🚗</div><div class="store-info"><strong>Escape Road</strong><span>Game</span></div><button id="install-btn-escaperoad-window" class="store-btn" onclick="installApp('escaperoad-window', '🚗', 'Escape Road', this)">Install</button><div class="progress-container" id="progress-container-escaperoad-window"><div class="progress-bar" id="progress-bar-escaperoad-window"></div></div></div>
-                    <div class="store-card"><div class="store-icon">🏎️</div><div class="store-info"><strong>Escape Road 2</strong><span>Game</span></div><button id="install-btn-escaperoad2-window" class="store-btn" onclick="installApp('escaperoad2-window', '🏎️', 'Escape Road 2', this)">Install</button><div class="progress-container" id="progress-container-escaperoad2-window"><div class="progress-bar" id="progress-bar-escaperoad2-window"></div></div></div>
-                    <div class="store-card"><div class="store-icon">🪐</div><div class="store-info"><strong>Solar Smash</strong><span>Game</span></div><button id="install-btn-solarsmash-window" class="store-btn" onclick="installApp('solarsmash-window', '🪐', 'Solar Smash', this)">Install</button><div class="progress-container" id="progress-container-solarsmash-window"><div class="progress-bar" id="progress-bar-solarsmash-window"></div></div></div>
-                    <div class="store-card"><div class="store-icon">🧠</div><div class="store-info"><strong>Brainrot</strong><span>Game</span></div><button id="install-btn-brainrot-window" class="store-btn" onclick="installApp('brainrot-window', '🧠', 'Brainrot', this)">Install</button><div class="progress-container" id="progress-container-brainrot-window"><div class="progress-bar" id="progress-bar-brainrot-window"></div></div></div>
-                    <div class="store-card"><div class="store-icon">🥊</div><div class="store-info"><strong>Ragdoll Hit</strong><span>Game</span></div><button id="install-btn-ragdollhit-window" class="store-btn" onclick="installApp('ragdollhit-window', '🥊', 'Ragdoll Hit', this)">Install</button><div class="progress-container" id="progress-container-ragdollhit-window"><div class="progress-bar" id="progress-bar-ragdollhit-window"></div></div></div>
-                    <div class="store-card"><div class="store-icon">🏹</div><div class="store-info"><strong>Ragdoll Archers</strong><span>Game</span></div><button id="install-btn-ragdollarchers-window" class="store-btn" onclick="installApp('ragdollarchers-window', '🏹', 'Ragdoll Archers', this)">Install</button><div class="progress-container" id="progress-container-ragdollarchers-window"><div class="progress-bar" id="progress-bar-ragdollarchers-window"></div></div></div>
+            
+            <div class="window-content" style="background: #fff;">
+                <div class="play-header">
+                    <div class="play-logo">▶<span>Google Play</span></div>
+                    <div class="play-search"><input type="text" placeholder="Search for apps & games"></div>
                 </div>
+                <div class="play-tabs">
+                    <button class="play-tab active" onclick="switchStoreTab('games')">Games</button>
+                    <button class="play-tab" onclick="switchStoreTab('apps')">Apps</button>
+                </div>
+
+                <div id="store-games-tab" class="store-tab-content active">
+                    <h2 class="play-section-title">Recommended for you</h2>
+                    <div class="store-grid">
+                        <div class="store-card"><div class="store-icon">🐻</div><div class="store-info"><strong>Five Nights</strong><span>Action • 4.5 ★</span></div><button id="install-btn-fnae-window" class="store-btn" onclick="installApp('fnae-window', '🐻', 'Five Nights', this)">Install</button><div class="progress-container" id="progress-container-fnae-window"><div class="progress-bar" id="progress-bar-fnae-window"></div></div></div>
+                        <div class="store-card"><div class="store-icon">⛏️</div><div class="store-info"><strong>Eaglercraft</strong><span>Adventure • 4.8 ★</span></div><button id="install-btn-eaglercraft-window" class="store-btn" onclick="installApp('eaglercraft-window', '⛏️', 'Eaglercraft', this)">Install</button><div class="progress-container" id="progress-container-eaglercraft-window"><div class="progress-bar" id="progress-bar-eaglercraft-window"></div></div></div>
+                        <div class="store-card"><div class="store-icon">👵</div><div class="store-info"><strong>Granny</strong><span>Horror • 4.3 ★</span></div><button id="install-btn-granny-window" class="store-btn" onclick="installApp('granny-window', '👵', 'Granny', this)">Install</button><div class="progress-container" id="progress-container-granny-window"><div class="progress-bar" id="progress-bar-granny-window"></div></div></div>
+                        <div class="store-card"><div class="store-icon">🚗</div><div class="store-info"><strong>Escape Road</strong><span>Racing • 4.6 ★</span></div><button id="install-btn-escaperoad-window" class="store-btn" onclick="installApp('escaperoad-window', '🚗', 'Escape Road', this)">Install</button><div class="progress-container" id="progress-container-escaperoad-window"><div class="progress-bar" id="progress-bar-escaperoad-window"></div></div></div>
+                        <div class="store-card"><div class="store-icon">🏎️</div><div class="store-info"><strong>Escape Road 2</strong><span>Racing • 4.7 ★</span></div><button id="install-btn-escaperoad2-window" class="store-btn" onclick="installApp('escaperoad2-window', '🏎️', 'Escape Road 2', this)">Install</button><div class="progress-container" id="progress-container-escaperoad2-window"><div class="progress-bar" id="progress-bar-escaperoad2-window"></div></div></div>
+                        <div class="store-card"><div class="store-icon">🪐</div><div class="store-info"><strong>Solar Smash</strong><span>Simulation • 4.4 ★</span></div><button id="install-btn-solarsmash-window" class="store-btn" onclick="installApp('solarsmash-window', '🪐', 'Solar Smash', this)">Install</button><div class="progress-container" id="progress-container-solarsmash-window"><div class="progress-bar" id="progress-bar-solarsmash-window"></div></div></div>
+                        <div class="store-card"><div class="store-icon">🧠</div><div class="store-info"><strong>Brainrot</strong><span>Puzzle • 4.1 ★</span></div><button id="install-btn-brainrot-window" class="store-btn" onclick="installApp('brainrot-window', '🧠', 'Brainrot', this)">Install</button><div class="progress-container" id="progress-container-brainrot-window"><div class="progress-bar" id="progress-bar-brainrot-window"></div></div></div>
+                        <div class="store-card"><div class="store-icon">🥊</div><div class="store-info"><strong>Ragdoll Hit</strong><span>Action • 4.2 ★</span></div><button id="install-btn-ragdollhit-window" class="store-btn" onclick="installApp('ragdollhit-window', '🥊', 'Ragdoll Hit', this)">Install</button><div class="progress-container" id="progress-container-ragdollhit-window"><div class="progress-bar" id="progress-bar-ragdollhit-window"></div></div></div>
+                        <div class="store-card"><div class="store-icon">🏹</div><div class="store-info"><strong>Ragdoll Archers</strong><span>Action • 4.5 ★</span></div><button id="install-btn-ragdollarchers-window" class="store-btn" onclick="installApp('ragdollarchers-window', '🏹', 'Ragdoll Archers', this)">Install</button><div class="progress-container" id="progress-container-ragdollarchers-window"><div class="progress-bar" id="progress-bar-ragdollarchers-window"></div></div></div>
+                    </div>
+                </div>
+
+                <div id="store-apps-tab" class="store-tab-content" style="display: none;">
+                    <h2 class="play-section-title">Essential Apps</h2>
+                    <div class="store-grid">
+                        <div class="store-card"><div class="store-icon" style="color: #5865F2;">💬</div><div class="store-info"><strong>Discord</strong><span>Communication • 4.8 ★</span></div><button id="install-btn-discord-window" class="store-btn" onclick="installApp('discord-window', '💬', 'Discord', this)">Install</button><div class="progress-container" id="progress-container-discord-window"><div class="progress-bar" id="progress-bar-discord-window"></div></div></div>
+                        
+                        <div class="store-card"><div class="store-icon">🌐</div><div class="store-info"><strong>Chrome</strong><span>Web Browser • 4.9 ★</span></div><button class="store-btn" disabled style="background: transparent; color: #01875f;">Installed</button></div>
+                        <div class="store-card"><div class="store-icon">📝</div><div class="store-info"><strong>Wordpad</strong><span>Productivity • 4.5 ★</span></div><button class="store-btn" disabled style="background: transparent; color: #01875f;">Installed</button></div>
+                    </div>
+                </div>
+
             </div>
         </div>
 
