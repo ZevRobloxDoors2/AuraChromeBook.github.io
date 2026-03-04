@@ -150,7 +150,6 @@ function openApp(appId) {
         const iframe = appWindow.querySelector('iframe');
         if (iframe) {
             const currentSrc = iframe.src || "";
-            // If it's empty or set to about:blank, inject the game's URL
             if (currentSrc === "" || currentSrc.includes("about:blank") || currentSrc.includes(window.location.href)) {
                 iframe.src = iframe.getAttribute('data-src');
             }
@@ -267,7 +266,15 @@ document.getElementById('wallpaper-upload').addEventListener('change', function(
     }
 });
 
-// --- 7. Taskbar & App Store Logic ---
+// --- 7. Taskbar & Play Store Logic ---
+function switchStoreTab(tabId) {
+    document.querySelectorAll('.play-tab').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.store-tab-content').forEach(content => content.classList.remove('active'));
+    
+    document.querySelector(`[onclick="switchStoreTab('${tabId}')"]`).classList.add('active');
+    document.getElementById(`store-${tabId}-tab`).classList.add('active');
+}
+
 const taskbarIconsContainer = document.getElementById('app-icons');
 let draggedIcon = null;
 function makeIconDraggable(icon) {
