@@ -1,5 +1,9 @@
-// --- 1. Boot Sequence & Init ---
+// --- 1. Boot Sequence, Setup & Init ---
 window.onload = function() {
+    // 1. Check if user already has a saved name
+    const savedName = localStorage.getItem('os_username');
+    if(savedName) document.getElementById('lock-username').innerText = savedName;
+
     setTimeout(() => {
         const boot = document.getElementById('boot-screen');
         if(boot) {
@@ -7,9 +11,15 @@ window.onload = function() {
             setTimeout(() => boot.style.display = 'none', 500);
         }
 
-        if (localStorage.getItem('os_password')) {
+        // 2. Check Setup / Lock Screen routing
+        if (!localStorage.getItem('os_setup_complete')) {
+            // First time user! Show setup screen
+            document.getElementById('setup-screen').style.display = 'flex';
+        } else if (localStorage.getItem('os_password')) {
+            // Returning user with a password
             document.getElementById('lock-screen').style.display = 'flex';
-        }
+        } 
+        // Else: Returning user without password -> Goes straight to desktop
     }, 2500);
 
     const savedWallpaper = localStorage.getItem('os_wallpaper');
@@ -23,6 +33,45 @@ window.onload = function() {
     document.querySelectorAll('.app-icon').forEach(makeIconDraggable);
     initBattery();
 };
+
+// --- First Time Setup Logic ---
+function nextSetupStep(stepNumber) {
+    if (stepNumber === 2) {
+        const username = document.getElementById('setup-username').value.trim() || "Guest";
+        localStorage.setItem('os_username', username);
+        document.getElementById('lock-username').innerText = username;
+        
+        document.getElementById('setup-step-1').style.display = 'none';
+        document.getElementById('setup-step-2').style.display = 'block';
+    }
+}
+
+function skipPassword() {
+    document.getElementById('setup-step-2').style.display = 'none';
+    document.getElementById('setup-step-3').style.display = 'block';
+}
+
+function saveSetupPassword() {
+    const pass = document.getElementById('setup-password').value;
+    const q = document.getElementById('setup-question').value;
+    const a = document.getElementById('setup-answer').value;
+    
+    if(pass) localStorage.setItem('os_password', pass);
+    if(q) localStorage.setItem('os_question', q);
+    if(a) localStorage.setItem('os_answer', a);
+    
+    document.getElementById('setup-step-2').style.display = 'none';
+    document.getElementById('setup-step-3').style.display = 'block';
+}
+
+function finishSetup() {
+    localStorage.setItem('os_setup_complete', 'true');
+    document.getElementById('setup-screen').style.display = 'none';
+    
+    if (localStorage.getItem('os_password')) {
+        document.getElementById('lock-screen').style.display = 'flex';
+    }
+}
 
 // --- 2. System UI ---
 function updateClock() {
@@ -146,7 +195,6 @@ let highestZ = 10;
 function openApp(appId) {
     const appWindow = document.getElementById(appId);
     if(appWindow) {
-        // --- MEMORY FIX: Force iframe to load exactly when opened ---
         const iframe = appWindow.querySelector('iframe');
         if (iframe) {
             const currentSrc = iframe.src || "";
@@ -174,7 +222,6 @@ function closeApp(appId) {
     appWindow.classList.remove('minimized');
     updateTaskbarIndicator(appId, false);
     
-    // --- MEMORY FIX: Completely wipe iframe to free RAM ---
     const iframe = appWindow.querySelector('iframe');
     if(iframe) { 
         iframe.src = 'about:blank'; 
@@ -248,7 +295,6 @@ function chromeBack() { if (chromeIndex > 0) { chromeIndex--; document.getElemen
 function chromeForward() { if (chromeIndex < chromeHistory.length - 1) { chromeIndex++; document.getElementById('chrome-frame').src = chromeHistory[chromeIndex]; document.getElementById('chrome-url').value = chromeHistory[chromeIndex]; } }
 function chromeReload() { const iframe = document.getElementById('chrome-frame'); iframe.src = iframe.src; }
 
-// Wallpaper Handling
 function setWallpaper(url) {
     let highResUrl = url.replace("w=400", "w=2000");
     document.getElementById('desktop').style.backgroundImage = `url('${highResUrl}')`;
