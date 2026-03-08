@@ -119,10 +119,10 @@
             <div class="window-header" id="chrome-window-header"><span class="window-title">🌐 Google Chrome</span><div><button class="win-btn" onclick="minimizeApp('chrome-window')">−</button><button class="win-btn" onclick="maximizeApp('chrome-window')">□</button><button class="win-btn close-btn" onclick="closeApp('chrome-window')">✕</button></div></div>
             <div class="browser-toolbar">
                 <button onclick="chromeBack()">◀</button><button onclick="chromeForward()">▶</button><button onclick="chromeReload()">↻</button>
-                <input type="text" id="chrome-url" value="https://bing.com" placeholder="Search Google or type a URL">
+                <input type="text" id="chrome-url" value="https://www.google.com" placeholder="Search Google or type a URL">
                 <button onclick="navigateChrome()">Go</button>
             </div>
-            <div class="window-content"><iframe id="chrome-frame" src="https://www.bing.com" width="100%" height="100%" frameborder="0"></iframe></div>
+            <div class="window-content"><iframe id="chrome-frame" src="https://www.google.com/webhp?igu=1" width="100%" height="100%" frameborder="0"></iframe></div>
         </div>
 
         <div class="window" id="settings-window" style="display: none;">
@@ -148,6 +148,13 @@
                     <input type="text" id="set-answer" placeholder="Answer" class="modern-input"><br>
                     <button onclick="saveSecuritySettings()" class="modern-btn">Save Security Info</button>
                     <p id="security-save-msg" style="color: #81c995; display: none; font-size: 13px; margin-top:10px;">Security settings saved!</p>
+                </div>
+
+                <h3 class="settings-title">System Updates</h3>
+                <div class="settings-card">
+                    <strong style="display: block; margin-bottom: 5px;">Version 2.0 (Latest)</strong>
+                    <p style="font-size: 13px; color: var(--sys-text-muted); margin-top: 0; margin-bottom: 15px;">Added Window Maximizing, Uninstalling Apps, Draggable Desktop Icons, Dark Mode, and Google search integration.</p>
+                    <button onclick="alert('Your system is up to date!')" class="modern-btn">Check for Updates</button>
                 </div>
 
                 <h3 class="settings-title" style="color: #ea4335;">System Operations</h3>
@@ -191,16 +198,20 @@
                     <div class="store-grid">
                         <div class="store-card"><div class="store-icon" style="color: #5865F2;">💬</div><div class="store-info"><strong>Discord</strong><span>Communication • 4.8 ★</span></div><button id="install-btn-discord-window" class="store-btn" onclick="installApp('discord-window', '💬', 'Discord', this)">Install</button><div class="progress-container" id="progress-container-discord-window"><div class="progress-bar" id="progress-bar-discord-window"></div></div></div>
                         <div class="store-card"><div class="store-icon">🎬</div><div class="store-info"><strong>AuraFlix</strong><span>Entertainment • 4.7 ★</span></div><button id="install-btn-auraflix-window" class="store-btn" onclick="installApp('auraflix-window', '🎬', 'AuraFlix', this)">Install</button><div class="progress-container" id="progress-container-auraflix-window"><div class="progress-bar" id="progress-bar-auraflix-window"></div></div></div>
-                        <div class="store-card"><div class="store-icon">🌐</div><div class="store-info"><strong>Chrome</strong><span>Web Browser • 4.9 ★</span></div><button class="store-btn" disabled style="background: transparent; color: var(--play-green);">Installed</button></div>
+                        <div class="store-card"><div class="store-icon" style="color: #ff3b30;">🎵</div><div class="store-info"><strong>Aura Music</strong><span>Audio • 4.6 ★</span></div><button id="install-btn-auramusic-window" class="store-btn" onclick="installApp('auramusic-window', '🎵', 'Aura Music', this)">Install</button><div class="progress-container" id="progress-container-auramusic-window"><div class="progress-bar" id="progress-bar-auramusic-window"></div></div></div>
+                        
+                        <div class="store-card"><div class="store-icon">🌐</div><div class="store-info"><strong>Google Chrome</strong><span>Web Browser • 4.9 ★</span></div><button class="store-btn" disabled style="background: transparent; color: var(--play-green);">Installed</button></div>
                         <div class="store-card"><div class="store-icon">📝</div><div class="store-info"><strong>Wordpad</strong><span>Productivity • 4.5 ★</span></div><button class="store-btn" disabled style="background: transparent; color: var(--play-green);">Installed</button></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="window" id="auraflix-window" style="display: none; width: 900px; height: 600px;"><div class="window-header" id="auraflix-window-header"><span class="window-title">🎬 AuraFlix</span><div><button class="win-btn" onclick="minimizeApp('auraflix-window')">−</button><button class="win-btn" onclick="maximizeApp('auraflix-window')">□</button><button class="win-btn close-btn" onclick="closeApp('auraflix-window')">✕</button></div></div><div class="window-content"><iframe data-src="https://prince-art-proxy.github.io/t9os/movie.html" src="" width="100%" height="100%" frameborder="0"></iframe></div></div>
-        <div class="window" id="fnae-window" style="display: none; width: 800px; height: 600px;"><div class="window-header" id="fnae-window-header"><span class="window-title">🐻 Five Nights</span><div><button class="win-btn" onclick="minimizeApp('fnae-window')">−</button><button class="win-btn" onclick="maximizeApp('fnae-window')">□</button><button class="win-btn close-btn" onclick="closeApp('fnae-window')">✕</button></div></div><div class="window-content"><iframe data-src="Games/fnae.html" src="" width="100%" height="100%" frameborder="0"></iframe></div></div>
+        <div class="window" id="auraflix-window" style="display: none; width: 900px; height: 600px;"><div class="window-header" id="auraflix-window-header"><span class="window-title">🎬 AuraFlix</span><div><button class="win-btn" onclick="minimizeApp('auraflix-window')">−</button><button class="win-btn" onclick="maximizeApp('auraflix-window')">□</button><button class="win-btn close-btn" onclick="closeApp('auraflix-window')">✕</button></div></div><div class="window-content"><iframe data-src="Apps/AuraFlix.html" src="" width="100%" height="100%" frameborder="0"></iframe></div></div>
+        <div class="window" id="auramusic-window" style="display: none; width: 600px; height: 500px;"><div class="window-header" id="auramusic-window-header"><span class="window-title">🎵 Aura Music</span><div><button class="win-btn" onclick="minimizeApp('auramusic-window')">−</button><button class="win-btn" onclick="maximizeApp('auramusic-window')">□</button><button class="win-btn close-btn" onclick="closeApp('auramusic-window')">✕</button></div></div><div class="window-content"><iframe data-src="Apps/AuraOS Music.html" src="" width="100%" height="100%" frameborder="0"></iframe></div></div>
         <div class="window" id="discord-window" style="display: none; width: 900px; height: 600px;"><div class="window-header" id="discord-window-header"><span class="window-title">💬 Discord</span><div><button class="win-btn" onclick="minimizeApp('discord-window')">−</button><button class="win-btn" onclick="maximizeApp('discord-window')">□</button><button class="win-btn close-btn" onclick="closeApp('discord-window')">✕</button></div></div><div class="window-content"><iframe data-src="Apps/discord.html" src="" width="100%" height="100%" frameborder="0"></iframe></div></div>
+
+        <div class="window" id="fnae-window" style="display: none; width: 800px; height: 600px;"><div class="window-header" id="fnae-window-header"><span class="window-title">🐻 Five Nights</span><div><button class="win-btn" onclick="minimizeApp('fnae-window')">−</button><button class="win-btn" onclick="maximizeApp('fnae-window')">□</button><button class="win-btn close-btn" onclick="closeApp('fnae-window')">✕</button></div></div><div class="window-content"><iframe data-src="Games/Five Nights at Epstein's.html" src="" width="100%" height="100%" frameborder="0"></iframe></div></div>
         <div class="window" id="eaglercraft-window" style="display: none; width: 800px; height: 600px;"><div class="window-header" id="eaglercraft-window-header"><span class="window-title">⛏️ Eaglercraft</span><div><button class="win-btn" onclick="minimizeApp('eaglercraft-window')">−</button><button class="win-btn" onclick="maximizeApp('eaglercraft-window')">□</button><button class="win-btn close-btn" onclick="closeApp('eaglercraft-window')">✕</button></div></div><div class="window-content"><iframe data-src="Games/Eaglercraft.html" src="" width="100%" height="100%" frameborder="0"></iframe></div></div>
         <div class="window" id="granny-window" style="display: none; width: 800px; height: 600px;"><div class="window-header" id="granny-window-header"><span class="window-title">👵 Granny</span><div><button class="win-btn" onclick="minimizeApp('granny-window')">−</button><button class="win-btn" onclick="maximizeApp('granny-window')">□</button><button class="win-btn close-btn" onclick="closeApp('granny-window')">✕</button></div></div><div class="window-content"><iframe data-src="Games/Granny.html" src="" width="100%" height="100%" frameborder="0"></iframe></div></div>
         <div class="window" id="escaperoad-window" style="display: none; width: 800px; height: 600px;"><div class="window-header" id="escaperoad-window-header"><span class="window-title">🚗 Escape Road</span><div><button class="win-btn" onclick="minimizeApp('escaperoad-window')">−</button><button class="win-btn" onclick="maximizeApp('escaperoad-window')">□</button><button class="win-btn close-btn" onclick="closeApp('escaperoad-window')">✕</button></div></div><div class="window-content"><iframe data-src="Games/Escape Road.html" src="" width="100%" height="100%" frameborder="0"></iframe></div></div>
@@ -211,7 +222,7 @@
         <div class="window" id="ragdollarchers-window" style="display: none; width: 800px; height: 600px;"><div class="window-header" id="ragdollarchers-window-header"><span class="window-title">🏹 Ragdoll Archers</span><div><button class="win-btn" onclick="minimizeApp('ragdollarchers-window')">−</button><button class="win-btn" onclick="maximizeApp('ragdollarchers-window')">□</button><button class="win-btn close-btn" onclick="closeApp('ragdollarchers-window')">✕</button></div></div><div class="window-content"><iframe data-src="Games/Ragdoll Archers.html" src="" width="100%" height="100%" frameborder="0"></iframe></div></div>
     </div>
 
-    <div id="notification-center"></div>
+    <div id="notification-toast-container"></div>
 
     <div id="launcher-menu" style="display: none;">
         <div class="launcher-search-box">
@@ -228,6 +239,14 @@
     </div>
 
     <div id="quick-settings" style="display: none;">
+        
+        <div id="qs-notifications">
+            <div class="qs-notif-header">Notifications</div>
+            <div id="qs-notif-list">
+                <div class="qs-no-notifs">No new notifications</div>
+            </div>
+        </div>
+
         <div class="qs-pills-grid">
             <div class="qs-pill active"><div class="qs-icon">📶</div><span>Wi-Fi</span></div>
             <div class="qs-pill"><div class="qs-icon">ᛒ</div><span>Bluetooth</span></div>
