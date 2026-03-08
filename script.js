@@ -1,5 +1,64 @@
-// --- 1. Boot Sequence & OOBE Setup ---
+// --- 1. Notification System ---
+const notificationMgr = {
+    showNotification: function({title, message, icon}) {
+        const container = document.getElementById('notification-center');
+        const notif = document.createElement('div');
+        notif.className = 'notification';
+        notif.innerHTML = `
+            <div class="notif-icon">${icon === 'shield-alert' ? '🛡️' : icon === 'sparkles' ? '✨' : '🚀'}</div>
+            <div class="notif-content">
+                <strong>${title}</strong>
+                <p>${message}</p>
+            </div>
+        `;
+        container.appendChild(notif);
+        
+        // Remove after 7 seconds
+        setTimeout(() => {
+            notif.style.opacity = '0';
+            setTimeout(() => notif.remove(), 300);
+        }, 7000);
+    }
+};
+
+function triggerInitialNotifications() {
+    if (sessionStorage.getItem('notifs_shown')) return;
+    sessionStorage.setItem('notifs_shown', 'true');
+    
+    setTimeout(() => {
+        notificationMgr.showNotification({
+            title: "Welcome to Aura OS!",
+            message: "Check out the Settings app to customize your desktop.",
+            icon: "sparkles"
+        });
+    }, 1500);
+
+    setTimeout(() => {
+        const firstTuesdayOfDec = 2; // Mar 10th, 2026
+        notificationMgr.showNotification({
+            title: "System Announcement",
+            message: `Safety is coming to Aura OS. You will be flagged if you use swear words or nasty usernames. Coming on December ${firstTuesdayOfDec}nd.`,
+            icon: "shield-alert"
+        });
+    }, 5000);
+
+    setTimeout(() => {
+        notificationMgr.showNotification({
+            title: "System Update: Brand New Features",
+            message: "Added Window Maximizing, Uninstalling Apps, Draggable Desktop Icons, and Dark Mode!",
+            icon: "rocket"
+        });
+    }, 9000);
+}
+
+// --- 2. Boot Sequence & OOBE Setup ---
 window.onload = function() {
+    // Check saved theme
+    if(localStorage.getItem('os_theme') === 'light') {
+        document.body.setAttribute('data-theme', 'light');
+        document.getElementById('theme-text').innerText = "Light Theme";
+    }
+
     setTimeout(() => {
         const boot = document.getElementById('boot-screen');
         if(boot) {
@@ -16,21 +75,19 @@ window.onload = function() {
             if (localStorage.getItem('os_password')) {
                 document.getElementById('lock-username').innerText = localStorage.getItem('os_username') || 'User';
                 document.getElementById('lock-screen').style.display = 'flex';
+            } else {
+                triggerInitialNotifications();
             }
         }
     }, 2500);
 };
 
-// OOBE Setup Functions
 let tempUsername = '';
 let tempPassword = '';
 
 function processSetupStep1() {
     const nameInput = document.getElementById('setup-name-input').value.trim();
-    if (nameInput === '') {
-        alert("Please enter a name to continue.");
-        return;
-    }
+    if (nameInput === '') { alert("Please enter a name to continue."); return; }
     tempUsername = nameInput;
     document.getElementById('setup-step-1').classList.remove('active');
     document.getElementById('setup-step-2').classList.add('active');
@@ -39,10 +96,7 @@ function processSetupStep1() {
 function processSetupStep2(isSkipped) {
     if (!isSkipped) {
         const passInput = document.getElementById('setup-pass-input').value;
-        if (passInput === '') {
-            alert("Please enter a password or choose 'Skip'.");
-            return;
-        }
+        if (passInput === '') { alert("Please enter a password or choose 'Skip'."); return; }
         tempPassword = passInput;
     }
     document.getElementById('setup-step-2').classList.remove('active');
@@ -52,16 +106,13 @@ function processSetupStep2(isSkipped) {
 function finalizeSetup() {
     localStorage.setItem('os_setup_complete', 'true');
     localStorage.setItem('os_username', tempUsername);
-    if (tempPassword !== '') {
-        localStorage.setItem('os_password', tempPassword);
-    }
+    if (tempPassword !== '') localStorage.setItem('os_password', tempPassword);
     
     document.getElementById('setup-screen').style.display = 'none';
-    
-    // Set dynamic name on lock screen for the future
     document.getElementById('lock-username').innerText = tempUsername;
     
     initializeDesktop();
+    triggerInitialNotifications();
 }
 
 function initializeDesktop() {
@@ -74,10 +125,10 @@ function initializeDesktop() {
     });
 
     document.querySelectorAll('.app-icon').forEach(makeIconDraggable);
+    document.querySelectorAll('.desktop-icon').forEach(dragDesktopIcon);
     initBattery();
 }
 
-// --- Factory Reset ---
 function factoryReset() {
     if (confirm("WARNING: This will erase all settings, passwords, and installed apps. The system will reboot. Continue?")) {
         localStorage.clear();
@@ -85,7 +136,21 @@ function factoryReset() {
     }
 }
 
-// --- 2. System UI ---
+// --- 3. System UI & Dark Mode ---
+function toggleTheme() {
+    const body = document.body;
+    const textSpan = document.getElementById('theme-text');
+    if (body.getAttribute('data-theme') === 'dark') {
+        body.setAttribute('data-theme', 'light');
+        localStorage.setItem('os_theme', 'light');
+        textSpan.innerText = "Light Theme";
+    } else {
+        body.setAttribute('data-theme', 'dark');
+        localStorage.setItem('os_theme', 'dark');
+        textSpan.innerText = "Dark Theme";
+    }
+}
+
 function updateClock() {
     const now = new Date();
     let hours = now.getHours(), minutes = now.getMinutes();
@@ -120,19 +185,72 @@ document.getElementById('brightness-slider').addEventListener('input', function(
     document.getElementById('desktop').style.filter = `brightness(${e.target.value}%)`;
 });
 
-// --- 3. Context & Menus ---
+// --- 4. Context Menus & Uninstall Logic ---
 const desktop = document.getElementById('desktop');
 const contextMenu = document.getElementById('context-menu');
 const quickSettings = document.getElementById('quick-settings');
 const launcherMenu = document.getElementById('launcher-menu');
+const uninstallBtn = document.getElementById('context-uninstall');
+
+let selectedAppIdToUninstall = null;
 
 desktop.addEventListener('contextmenu', (e) => {
     e.preventDefault();
-    if(e.target === desktop || e.target.id === 'desktop-icons') {
+    
+    // Check if right clicking an app icon on the taskbar
+    const appIcon = e.target.closest('.app-icon');
+    
+    if(appIcon) {
+        // It's an app icon! Show uninstall option
+        selectedAppIdToUninstall = appIcon.id.replace('taskbar-', '');
+        uninstallBtn.style.display = 'block';
+        contextMenu.style.display = 'block';
+        contextMenu.style.left = e.clientX + 'px';
+        contextMenu.style.top = (e.clientY - 100) + 'px'; // pop up above taskbar
+    } else if(e.target === desktop || e.target.id === 'desktop-icons-container') {
+        // Regular desktop right click
+        selectedAppIdToUninstall = null;
+        uninstallBtn.style.display = 'none';
         contextMenu.style.display = 'block';
         contextMenu.style.left = e.clientX + 'px';
         contextMenu.style.top = e.clientY + 'px';
     }
+});
+
+// Handle the uninstallation
+uninstallBtn.addEventListener('click', () => {
+    if(selectedAppIdToUninstall) {
+        // Remove from taskbar
+        const tbIcon = document.getElementById('taskbar-' + selectedAppIdToUninstall);
+        if(tbIcon) tbIcon.remove();
+        
+        // Remove from launcher
+        const launcherItems = document.querySelectorAll('.launcher-item');
+        launcherItems.forEach(item => {
+            if(item.getAttribute('onclick') === `openApp('${selectedAppIdToUninstall}')`) {
+                item.remove();
+            }
+        });
+        
+        // Reset App Store button
+        const storeBtn = document.getElementById('install-btn-' + selectedAppIdToUninstall);
+        if(storeBtn) {
+            storeBtn.innerText = 'Install';
+            storeBtn.disabled = false;
+        }
+        
+        // Remove from local storage
+        let savedApps = JSON.parse(localStorage.getItem('os_installed_apps') || '[]');
+        savedApps = savedApps.filter(app => app.id !== selectedAppIdToUninstall);
+        localStorage.setItem('os_installed_apps', JSON.stringify(savedApps));
+        
+        notificationMgr.showNotification({
+            title: "App Uninstalled",
+            message: "The application has been successfully removed.",
+            icon: "sparkles"
+        });
+    }
+    contextMenu.style.display = 'none';
 });
 
 document.addEventListener('click', (e) => {
@@ -145,46 +263,25 @@ document.addEventListener('click', (e) => {
     }
 });
 
-function toggleQuickSettings() {
-    quickSettings.style.display = quickSettings.style.display === 'none' ? 'block' : 'none';
-    launcherMenu.style.display = 'none';
-}
-
-function toggleMenu() {
-    launcherMenu.style.display = launcherMenu.style.display === 'none' ? 'flex' : 'none';
-    quickSettings.style.display = 'none';
-    if (launcherMenu.style.display === 'flex') {
-        document.getElementById('launcher-search').focus();
-    }
-}
-
-function filterLauncher() {
-    const query = document.getElementById('launcher-search').value.toLowerCase();
-    const items = document.querySelectorAll('.launcher-item');
-    items.forEach(item => {
-        const text = item.querySelector('.l-text').innerText.toLowerCase();
-        item.style.display = text.includes(query) ? 'flex' : 'none';
-    });
-}
+function toggleQuickSettings() { quickSettings.style.display = quickSettings.style.display === 'none' ? 'block' : 'none'; launcherMenu.style.display = 'none'; }
+function toggleMenu() { launcherMenu.style.display = launcherMenu.style.display === 'none' ? 'flex' : 'none'; quickSettings.style.display = 'none'; if (launcherMenu.style.display === 'flex') document.getElementById('launcher-search').focus(); }
+function filterLauncher() { const query = document.getElementById('launcher-search').value.toLowerCase(); document.querySelectorAll('.launcher-item').forEach(item => { const text = item.querySelector('.l-text').innerText.toLowerCase(); item.style.display = text.includes(query) ? 'flex' : 'none'; }); }
 
 function lockSystem() {
     if (localStorage.getItem('os_password')) {
         document.getElementById('lock-username').innerText = localStorage.getItem('os_username') || 'User';
         document.getElementById('lock-screen').style.display = 'flex';
-    } else {
-        alert("Please set a password in Settings first!");
-    }
-    quickSettings.style.display = 'none'; 
-    contextMenu.style.display = 'none';
+    } else { alert("Please set a password in Settings first!"); }
+    quickSettings.style.display = 'none'; contextMenu.style.display = 'none';
 }
 
-// --- 4. Security ---
 function unlockOS() {
     const input = document.getElementById('lock-password').value;
     if (input === localStorage.getItem('os_password') || input === localStorage.getItem('os_answer')) {
         document.getElementById('lock-screen').style.display = 'none';
         document.getElementById('lock-password').value = '';
         document.getElementById('lock-error').style.display = 'none';
+        triggerInitialNotifications(); // trigger notifs if unlocking for first time this session
     } else document.getElementById('lock-error').style.display = 'block';
 }
 
@@ -207,12 +304,11 @@ function saveSecuritySettings() {
     msg.style.display = 'block'; setTimeout(() => msg.style.display = 'none', 3000);
 }
 
-// --- 5. Window Memory Management (IFRAME FIX) ---
+// --- 5. Window Memory Management & Maximizing ---
 let highestZ = 10;
 function openApp(appId) {
     const appWindow = document.getElementById(appId);
     if(appWindow) {
-        // --- MEMORY FIX: Force iframe to load exactly when opened ---
         const iframe = appWindow.querySelector('iframe');
         if (iframe) {
             const currentSrc = iframe.src || "";
@@ -220,7 +316,6 @@ function openApp(appId) {
                 iframe.src = iframe.getAttribute('data-src');
             }
         }
-
         appWindow.style.display = 'flex'; 
         appWindow.classList.remove('minimized');
         bringToFront(appWindow); 
@@ -229,22 +324,18 @@ function openApp(appId) {
     launcherMenu.style.display = 'none';
 }
 
-function minimizeApp(appId) { 
-    document.getElementById(appId).classList.add('minimized'); 
-    updateTaskbarIndicator(appId, false); 
-}
+function minimizeApp(appId) { document.getElementById(appId).classList.add('minimized'); updateTaskbarIndicator(appId, false); }
+function maximizeApp(appId) { document.getElementById(appId).classList.toggle('fullscreen'); }
 
 function closeApp(appId) {
     const appWindow = document.getElementById(appId);
     appWindow.style.display = 'none'; 
     appWindow.classList.remove('minimized');
+    appWindow.classList.remove('fullscreen'); // reset maximize state
     updateTaskbarIndicator(appId, false);
     
-    // --- MEMORY FIX: Completely wipe iframe to free RAM ---
     const iframe = appWindow.querySelector('iframe');
-    if(iframe) { 
-        iframe.src = 'about:blank'; 
-    }
+    if(iframe) iframe.src = 'about:blank'; 
 }
 
 function toggleApp(appId) {
@@ -260,7 +351,7 @@ function updateTaskbarIndicator(appId, isActive) {
     if(icon) isActive ? icon.classList.add('active') : icon.classList.remove('active');
 }
 
-// Dragging & Snapping
+// Window Dragging 
 const snapPreview = document.getElementById('snap-preview');
 let currentSnap = null;
 document.querySelectorAll('.window').forEach(win => {
@@ -274,6 +365,7 @@ function dragElement(elmnt) {
 
     function dragMouseDown(e) {
         if(e.target.tagName === 'BUTTON') return;
+        if(elmnt.classList.contains('fullscreen')) return; // Disable dragging if maximized
         e.preventDefault(); pos3 = e.clientX; pos4 = e.clientY;
         document.onmouseup = closeDragElement; document.onmousemove = elementDrag;
         elmnt.classList.add('dragging');
@@ -292,8 +384,32 @@ function dragElement(elmnt) {
         document.onmouseup = null; document.onmousemove = null; elmnt.classList.remove('dragging'); snapPreview.style.display = 'none';
         if (currentSnap === 'left') { elmnt.style.left = '0'; elmnt.style.top = '0'; elmnt.style.width = '50vw'; elmnt.style.height = '100vh'; } 
         else if (currentSnap === 'right') { elmnt.style.left = '50vw'; elmnt.style.top = '0'; elmnt.style.width = '50vw'; elmnt.style.height = '100vh'; } 
-        else if (currentSnap === 'top') { elmnt.style.left = '0'; elmnt.style.top = '0'; elmnt.style.width = '100vw'; elmnt.style.height = '100vh'; }
+        else if (currentSnap === 'top') { elmnt.classList.add('fullscreen'); elmnt.style.width=''; elmnt.style.height=''; elmnt.style.top=''; elmnt.style.left=''; }
         currentSnap = null;
+    }
+}
+
+// Draggable Desktop Icons Logic
+function dragDesktopIcon(elmnt) {
+    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    elmnt.onmousedown = dragMouseDown;
+
+    function dragMouseDown(e) {
+        e.preventDefault();
+        pos3 = e.clientX; pos4 = e.clientY;
+        document.onmouseup = closeDragElement;
+        document.onmousemove = elementDrag;
+    }
+    function elementDrag(e) {
+        e.preventDefault();
+        pos1 = pos3 - e.clientX; pos2 = pos4 - e.clientY;
+        pos3 = e.clientX; pos4 = e.clientY;
+        elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+        elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+    }
+    function closeDragElement() {
+        document.onmouseup = null;
+        document.onmousemove = null;
     }
 }
 
@@ -336,7 +452,6 @@ document.getElementById('wallpaper-upload').addEventListener('change', function(
 function switchStoreTab(tabId) {
     document.querySelectorAll('.play-tab').forEach(tab => tab.classList.remove('active'));
     document.querySelectorAll('.store-tab-content').forEach(content => content.classList.remove('active'));
-    
     document.querySelector(`[onclick="switchStoreTab('${tabId}')"]`).classList.add('active');
     document.getElementById(`store-${tabId}-tab`).classList.add('active');
 }
