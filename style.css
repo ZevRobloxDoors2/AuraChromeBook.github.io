@@ -40,8 +40,8 @@ body, html { margin: 0; padding: 0; height: 100%; font-family: 'Google Sans', 'S
 @keyframes slide { 0% { left: -50px; } 100% { left: 100px; } }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-/* Notification Center */
-#notification-center { position: absolute; bottom: 70px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 10000; pointer-events: none; }
+/* Notification Toasts (Bottom Right) */
+#notification-toast-container { position: absolute; bottom: 70px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 10000; pointer-events: none; }
 .notification { width: 320px; background: var(--sys-surface); color: var(--sys-text); backdrop-filter: var(--sys-blur); border-radius: var(--radius-md); padding: 15px; display: flex; align-items: flex-start; gap: 15px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); border: 1px solid var(--sys-border); animation: slideInRight 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); pointer-events: auto; transition: opacity 0.3s; }
 .notif-icon { font-size: 24px; }
 .notif-content strong { display: block; font-size: 14px; margin-bottom: 4px; }
@@ -118,8 +118,22 @@ body, html { margin: 0; padding: 0; height: 100%; font-family: 'Google Sans', 'S
 .l-icon { font-size: 32px; background: rgba(128,128,128,0.05); width: 56px; height: 56px; display: flex; justify-content: center; align-items: center; border-radius: 50%; }
 .l-text { font-size: 12px; font-weight: 500; text-align: center; }
 
-/* Quick Settings */
+/* Quick Settings & Integrated Notification Center */
 #quick-settings { position: absolute; bottom: 70px; right: 10px; width: 360px; background: var(--sys-surface); border-radius: var(--radius-lg); padding: 20px; color: var(--sys-text); backdrop-filter: var(--sys-blur); box-shadow: 0 8px 32px rgba(0,0,0,0.4); z-index: 9999; border: 1px solid var(--sys-border); }
+
+/* Notifications Section in QS */
+#qs-notifications { background: rgba(128,128,128,0.05); border-radius: var(--radius-md); margin-bottom: 15px; display: flex; flex-direction: column; max-height: 180px; }
+.qs-notif-header { font-size: 11px; font-weight: 600; color: var(--sys-primary); padding: 12px 15px 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+#qs-notif-list { padding: 5px 15px 15px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; }
+.qs-no-notifs { font-size: 12px; color: var(--sys-text-muted); text-align: center; padding: 10px 0; }
+.qs-notif-item { display: flex; align-items: flex-start; gap: 10px; background: rgba(128,128,128,0.1); padding: 10px; border-radius: var(--radius-sm); position: relative; }
+.qs-notif-item .notif-icon { font-size: 16px; margin-top: 2px; }
+.qs-notif-item .notif-content { flex-grow: 1; padding-right: 15px; }
+.qs-notif-item .notif-content strong { display: block; font-size: 12px; margin-bottom: 2px; }
+.qs-notif-item .notif-content p { margin: 0; font-size: 11px; color: var(--sys-text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px; }
+.qs-notif-close { position: absolute; top: 8px; right: 8px; background: transparent; border: none; color: var(--sys-text-muted); font-size: 12px; cursor: pointer; border-radius: 50%; width: 20px; height: 20px; display: flex; justify-content: center; align-items: center; }
+.qs-notif-close:hover { background: rgba(128,128,128,0.2); color: var(--sys-text); }
+
 .qs-pills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
 .qs-pill { background: rgba(128,128,128,0.1); border-radius: var(--radius-md); padding: 12px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: 0.2s; font-size: 13px; font-weight: 500; }
 .qs-pill:hover { background: rgba(128,128,128,0.15); }
