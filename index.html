@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aura OS - Performance Edition</title>
+    <title>Aura OS - Ultimate Edition</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body data-theme="dark">
@@ -12,6 +12,16 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 64px; height: 64px; color: #8ab4f8;"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle><line x1="21.17" y1="8" x2="12" y2="8"></line><line x1="3.95" y1="6.06" x2="8.54" y2="14"></line><line x1="10.88" y1="21.94" x2="15.46" y2="14"></line></svg>
         </div>
         <div class="boot-loader"></div>
+    </div>
+
+    <div id="welcome-modal" style="display: none;">
+        <div class="welcome-box">
+            <h2>🎉 Welcome to AURA OS!!!</h2>
+            <p>You're new to this new OS system. This OS system was created from Gemini and Eren.</p>
+            <p>Do whatever you like in this OS system. New features will be added soon, Check the updates in Settings..</p>
+            <p style="color: var(--sys-primary); font-size: 12px; margin-top: 15px;">Enjoy this OS. Created on Nov 21 4:52PM</p>
+            <button onclick="closeWelcomeModal()">Awesome!</button>
+        </div>
     </div>
 
     <div id="setup-screen" style="display: none;">
@@ -79,39 +89,85 @@
 
         <div id="desktop-icons-container">
             <div class="desktop-icon" id="di-store" style="top: 20px; left: 20px;" ondblclick="openApp('store-window')"><div class="icon-emoji">🛍️</div><div class="icon-text">App Store</div></div>
-            <div class="desktop-icon" id="di-games" style="top: 120px; left: 20px;" ondblclick="openApp('games-folder-window')"><div class="icon-emoji">📁</div><div class="icon-text">Files</div></div>
+            <div class="desktop-icon" id="di-games" style="top: 120px; left: 20px;" ondblclick="openApp('files-window')"><div class="icon-emoji">📁</div><div class="icon-text">Files</div></div>
         </div>
         
-        <div class="window" id="games-folder-window" style="display: none;">
-            <div class="window-header" id="games-folder-window-header"><span class="window-title">📁 Files</span><div><button class="win-btn" onclick="minimizeApp('games-folder-window')">−</button><button class="win-btn" onclick="maximizeApp('games-folder-window')">□</button><button class="win-btn close-btn" onclick="closeApp('games-folder-window')">✕</button></div></div>
-            <div class="window-content" style="padding: 20px;"><p>Your local files and downloaded content will appear here.</p></div>
+        <div class="window" id="files-window" style="display: none;">
+            <div class="window-header" id="files-window-header"><span class="window-title">📁 Files</span><div><button class="win-btn" onclick="minimizeApp('files-window')">−</button><button class="win-btn" onclick="maximizeApp('files-window')">□</button><button class="win-btn close-btn" onclick="closeApp('files-window')">✕</button></div></div>
+            <div class="window-content" style="padding: 20px;">
+                <p style="margin-top: 0; color: var(--sys-text-muted); font-size: 13px;">My Device / Local Storage</p>
+                <div id="file-explorer-grid" class="file-grid">
+                    </div>
+            </div>
         </div>
 
         <div class="window" id="wordpad-window" style="display: none;">
             <div class="window-header" id="wordpad-window-header"><span class="window-title">📝 Wordpad</span><div><button class="win-btn" onclick="minimizeApp('wordpad-window')">−</button><button class="win-btn" onclick="maximizeApp('wordpad-window')">□</button><button class="win-btn close-btn" onclick="closeApp('wordpad-window')">✕</button></div></div>
             <div class="browser-toolbar">
+                <button onclick="notepadSave()" title="Save">💾 Save</button>
+                <button onclick="notepadSaveAs()" title="Save As">💾 Save As</button>
+                <button onclick="notepadOpen()" title="Open">📂 Open</button>
+                <div style="width: 1px; background: var(--sys-border); margin: 0 10px;"></div>
                 <button onclick="document.execCommand('undo')">↩</button><button onclick="document.execCommand('redo')">↪</button>
                 <button onclick="document.execCommand('bold')"><b>B</b></button><button onclick="document.execCommand('italic')"><i>I</i></button><button onclick="document.execCommand('underline')"><u>U</u></button>
             </div>
             <div class="window-content"><div id="wordpad-editor" contenteditable="true" placeholder="Start typing here..." style="padding: 20px; outline: none; height: 100%;"></div></div>
         </div>
 
-        <div class="window" id="calc-window" style="display: none; width: 320px; height: 480px;">
-            <div class="window-header" id="calc-window-header"><span class="window-title">🧮 Calculator</span><div><button class="win-btn" onclick="minimizeApp('calc-window')">−</button><button class="win-btn" onclick="maximizeApp('calc-window')">□</button><button class="win-btn close-btn" onclick="closeApp('calc-window')">✕</button></div></div>
-            <div class="window-content calc-bg">
-                <input type="text" id="calc-display" disabled value="0">
-                <div class="calc-grid">
-                    <button class="calc-btn span-2 action-light" onclick="calcClear()">C</button>
-                    <button class="calc-btn action-light" onclick="calcPress('/')">÷</button>
-                    <button class="calc-btn action-light" onclick="calcPress('*')">×</button>
-                    <button class="calc-btn" onclick="calcPress('7')">7</button><button class="calc-btn" onclick="calcPress('8')">8</button><button class="calc-btn" onclick="calcPress('9')">9</button>
-                    <button class="calc-btn action-light" onclick="calcPress('-')">−</button>
-                    <button class="calc-btn" onclick="calcPress('4')">4</button><button class="calc-btn" onclick="calcPress('5')">5</button><button class="calc-btn" onclick="calcPress('6')">6</button>
-                    <button class="calc-btn action-light" onclick="calcPress('+')">+</button>
-                    <button class="calc-btn" onclick="calcPress('1')">1</button><button class="calc-btn" onclick="calcPress('2')">2</button><button class="calc-btn" onclick="calcPress('3')">3</button>
-                    <button class="calc-btn action-blue" onclick="calcEval()" style="grid-row: span 2;">=</button>
-                    <button class="calc-btn span-2" onclick="calcPress('0')">0</button><button class="calc-btn" onclick="calcPress('.')">.</button>
+        <div class="window" id="messages-window" style="display: none; width: 800px; height: 500px;">
+            <div class="window-header" id="messages-window-header"><span class="window-title">💬 Aura Messages</span><div><button class="win-btn" onclick="minimizeApp('messages-window')">−</button><button class="win-btn" onclick="maximizeApp('messages-window')">□</button><button class="win-btn close-btn" onclick="closeApp('messages-window')">✕</button></div></div>
+            <div class="window-content msg-app-bg">
+                
+                <div id="msg-auth-view" class="msg-view active">
+                    <div class="msg-auth-card">
+                        <h2>Aura Messages</h2>
+                        <p>Sign in or create an account to chat with friends.</p>
+                        <input type="text" id="msg-username" placeholder="Username" class="modern-input">
+                        <input type="password" id="msg-password" placeholder="Password" class="modern-input">
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <button class="modern-btn" onclick="window.msgLogin()">Login</button>
+                            <button class="modern-btn" style="background: var(--sys-surface); color: var(--sys-primary); border: 1px solid var(--sys-primary);" onclick="window.msgSignup()">Create Account</button>
+                        </div>
+                        <p id="msg-auth-error" style="color: #ea4335; font-size: 12px; margin-top: 10px; display: none;"></p>
+                    </div>
                 </div>
+
+                <div id="msg-warning-view" class="msg-view">
+                    <div class="msg-auth-card" style="border-color: #ea4335;">
+                        <h2 style="color: #ea4335;">⚠️ Warning</h2>
+                        <p>This is under development.<br><strong>Please Don’t Forget Your Password</strong>, You will lose the ability to sign in forever.</p>
+                        <button class="modern-btn" style="background: #ea4335; width: 100%;" onclick="window.msgAcknowledgeWarning()">Okay, I understand</button>
+                    </div>
+                </div>
+
+                <div id="msg-main-view" class="msg-view" style="flex-direction: row; height: 100%;">
+                    <div class="msg-sidebar">
+                        <div class="msg-sidebar-header">
+                            <span id="msg-my-name" style="font-weight: bold;">User</span>
+                            <button onclick="window.msgLogout()" style="background: transparent; border: none; color: var(--sys-text-muted); cursor: pointer;">Logout</button>
+                        </div>
+                        <div class="msg-add-friend">
+                            <input type="text" id="msg-add-input" placeholder="Add Friend (Username)">
+                            <button onclick="window.msgAddFriend()">+</button>
+                        </div>
+                        <div class="msg-friends-list" id="msg-friends-list">
+                            </div>
+                    </div>
+                    <div class="msg-chat-area">
+                        <div class="msg-chat-header">
+                            <span id="msg-current-chat-name">Select a friend to chat</span>
+                            <button class="msg-report-btn" onclick="alert('User reported. Our safety team will review this chat.')">🚩 Report</button>
+                        </div>
+                        <div class="msg-chat-history" id="msg-chat-history">
+                            </div>
+                        <div class="msg-chat-input">
+                            <button class="msg-img-btn" onclick="alert('Coming Soon')">📷</button>
+                            <input type="text" id="msg-text-input" placeholder="Message..." onkeypress="if(event.key === 'Enter') window.msgSend()">
+                            <button class="msg-send-btn" onclick="window.msgSend()">Send</button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -152,8 +208,14 @@
 
                 <h3 class="settings-title">System Updates</h3>
                 <div class="settings-card">
-                    <strong style="display: block; margin-bottom: 5px;">Version 2.0 (Latest)</strong>
-                    <p style="font-size: 13px; color: var(--sys-text-muted); margin-top: 0; margin-bottom: 15px;">Added Window Maximizing, Uninstalling Apps, Draggable Desktop Icons, Dark Mode, and Google search integration.</p>
+                    <strong style="display: block; margin-bottom: 5px;">Version 3.0 (Latest)</strong>
+                    <ul style="font-size: 13px; color: var(--sys-text-muted); margin-top: 0; margin-bottom: 15px; padding-left: 20px;">
+                        <li>Safety Era Updates</li>
+                        <li>File Explorer & Notepad Saving</li>
+                        <li>Aura Messages App (Firebase Integrated)</li>
+                        <li>Window Maximizing & Uninstalling Apps</li>
+                        <li>Draggable Desktop Icons & Dark Mode</li>
+                    </ul>
                     <button onclick="alert('Your system is up to date!')" class="modern-btn">Check for Updates</button>
                 </div>
 
@@ -196,7 +258,7 @@
                 <div id="store-apps-tab" class="store-tab-content">
                     <h2 class="play-section-title">Essential Apps</h2>
                     <div class="store-grid">
-                        <div class="store-card"><div class="store-icon" style="color: #5865F2;">💬</div><div class="store-info"><strong>Discord</strong><span>Communication • 4.8 ★</span></div><button id="install-btn-discord-window" class="store-btn" onclick="installApp('discord-window', '💬', 'Discord', this)">Install</button><div class="progress-container" id="progress-container-discord-window"><div class="progress-bar" id="progress-bar-discord-window"></div></div></div>
+                        <div class="store-card"><div class="store-icon" style="color: #5865F2;">💬</div><div class="store-info"><strong>Aura Messages</strong><span>Social • 4.8 ★</span></div><button id="install-btn-messages-window" class="store-btn" onclick="installApp('messages-window', '💬', 'Aura Messages', this)">Install</button><div class="progress-container" id="progress-container-messages-window"><div class="progress-bar" id="progress-bar-messages-window"></div></div></div>
                         <div class="store-card"><div class="store-icon">🎬</div><div class="store-info"><strong>AuraFlix</strong><span>Entertainment • 4.7 ★</span></div><button id="install-btn-auraflix-window" class="store-btn" onclick="installApp('auraflix-window', '🎬', 'AuraFlix', this)">Install</button><div class="progress-container" id="progress-container-auraflix-window"><div class="progress-bar" id="progress-bar-auraflix-window"></div></div></div>
                         <div class="store-card"><div class="store-icon" style="color: #ff3b30;">🎵</div><div class="store-info"><strong>Aura Music</strong><span>Audio • 4.6 ★</span></div><button id="install-btn-auramusic-window" class="store-btn" onclick="installApp('auramusic-window', '🎵', 'Aura Music', this)">Install</button><div class="progress-container" id="progress-container-auramusic-window"><div class="progress-bar" id="progress-bar-auramusic-window"></div></div></div>
                         
@@ -234,17 +296,14 @@
             <div class="launcher-item" onclick="openApp('settings-window')"><div class="l-icon">⚙️</div><span class="l-text">Settings</span></div>
             <div class="launcher-item" onclick="openApp('wordpad-window')"><div class="l-icon">📝</div><span class="l-text">Wordpad</span></div>
             <div class="launcher-item" onclick="openApp('calc-window')"><div class="l-icon">🧮</div><span class="l-text">Calculator</span></div>
-            <div class="launcher-item" onclick="openApp('games-folder-window')"><div class="l-icon">📁</div><span class="l-text">Files</span></div>
+            <div class="launcher-item" onclick="openApp('files-window')"><div class="l-icon">📁</div><span class="l-text">Files</span></div>
         </div>
     </div>
 
     <div id="quick-settings" style="display: none;">
-        
         <div id="qs-notifications">
             <div class="qs-notif-header">Notifications</div>
-            <div id="qs-notif-list">
-                <div class="qs-no-notifs">No new notifications</div>
-            </div>
+            <div id="qs-notif-list"><div class="qs-no-notifs">No new notifications</div></div>
         </div>
 
         <div class="qs-pills-grid">
@@ -276,6 +335,7 @@
                 <button class="app-icon" draggable="true" onclick="toggleApp('settings-window')" title="Settings">⚙️</button>
                 <button class="app-icon" draggable="true" onclick="toggleApp('wordpad-window')" title="Wordpad">📝</button>
                 <button class="app-icon" draggable="true" onclick="toggleApp('calc-window')" title="Calculator">🧮</button>
+                <button class="app-icon" draggable="true" onclick="toggleApp('files-window')" title="Files">📁</button>
             </div>
             <div id="status-area" onclick="toggleQuickSettings()">
                 <div class="status-icons"><span>📶</span><span id="taskbar-battery">🔋</span></div>
@@ -285,5 +345,168 @@
     </div>
 
     <script src="script.js"></script>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, where, serverTimestamp, doc, setDoc, getDoc, updateDoc, arrayUnion, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const cfg={apiKey:"AIzaSyB_wEHBTj2vYiXeoESIGgGCatnWgqW5P1w",authDomain:"w3chat-82711.firebaseapp.com",projectId:"w3chat-82711",storageBucket:"w3chat-82711.firebasestorage.app",messagingSenderId:"36226332250",appId:"1:36226332250:web:0514fee75633359ea50a63"};
+        let app, auth, db, currentUser = null, currentChatId = null;
+        
+        try { app=initializeApp(cfg); auth=getAuth(app); db=getFirestore(app); } catch(e) {}
+
+        window.msgLogin = async function() {
+            const u = document.getElementById('msg-username').value.trim().toLowerCase();
+            const p = document.getElementById('msg-password').value;
+            const err = document.getElementById('msg-auth-error');
+            if(!u || !p) { err.innerText = "Please fill out all fields."; err.style.display="block"; return; }
+            try {
+                await signInWithEmailAndPassword(auth, u+"@auraos.local", p);
+                err.style.display="none";
+            } catch(e) { err.innerText = "Login failed. Check your password."; err.style.display="block"; }
+        }
+
+        window.msgSignup = async function() {
+            const u = document.getElementById('msg-username').value.trim().toLowerCase();
+            const p = document.getElementById('msg-password').value;
+            const err = document.getElementById('msg-auth-error');
+            if(!u || p.length < 6) { err.innerText = "Username required, password min 6 chars."; err.style.display="block"; return; }
+            try {
+                const cred = await createUserWithEmailAndPassword(auth, u+"@auraos.local", p);
+                await setDoc(doc(db, "users", cred.user.uid), { username: u, friends: [], requests: [] });
+                err.style.display="none";
+                
+                // Show Warning for new accounts
+                document.querySelectorAll('.msg-view').forEach(v => v.classList.remove('active'));
+                document.getElementById('msg-warning-view').classList.add('active');
+            } catch(e) { err.innerText = "Username may already exist."; err.style.display="block"; }
+        }
+
+        window.msgAcknowledgeWarning = function() {
+            document.querySelectorAll('.msg-view').forEach(v => v.classList.remove('active'));
+            document.getElementById('msg-main-view').classList.add('active');
+        }
+
+        window.msgLogout = function() { signOut(auth); }
+
+        window.msgAddFriend = async function() {
+            const input = document.getElementById('msg-add-input');
+            const targetUsername = input.value.trim().toLowerCase();
+            if(!targetUsername || targetUsername === currentUser.username) return;
+            
+            try {
+                const q = query(collection(db, "users"), where("username", "==", targetUsername));
+                onSnapshot(q, (snap) => {
+                    if(!snap.empty) {
+                        const targetUserDoc = snap.docs[0];
+                        updateDoc(doc(db, "users", targetUserDoc.id), { requests: arrayUnion(currentUser.username) });
+                        alert("Friend request sent to " + targetUsername + "!");
+                        input.value = "";
+                    } else { alert("User not found."); }
+                });
+            } catch(e) { console.error(e); }
+        }
+
+        window.msgSend = async function() {
+            if(!currentChatId) return;
+            const input = document.getElementById('msg-text-input');
+            const text = input.value.trim();
+            if(!text) return;
+            await addDoc(collection(db, "messages"), { chatId: currentChatId, sender: currentUser.username, text: text, timestamp: serverTimestamp() });
+            input.value = "";
+        }
+
+        // Auth State Observer
+        if(auth) {
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    const uDoc = await getDoc(doc(db, "users", user.uid));
+                    if(uDoc.exists()) {
+                        currentUser = Object.assign({uid: user.uid}, uDoc.data());
+                        document.getElementById('msg-my-name').innerText = currentUser.username;
+                        
+                        // Default to main view (bypass warning if returning)
+                        if(document.getElementById('msg-warning-view').classList.contains('active') === false) {
+                            document.querySelectorAll('.msg-view').forEach(v => v.classList.remove('active'));
+                            document.getElementById('msg-main-view').classList.add('active');
+                        }
+                        setupFriendListeners();
+                    }
+                } else {
+                    currentUser = null;
+                    document.querySelectorAll('.msg-view').forEach(v => v.classList.remove('active'));
+                    document.getElementById('msg-auth-view').classList.add('active');
+                }
+            });
+        }
+
+        let activeChatUnsub = null;
+        function setupFriendListeners() {
+            onSnapshot(doc(db, "users", currentUser.uid), (docSnap) => {
+                const data = docSnap.data();
+                if(!data) return;
+                
+                // Check new requests
+                const incomingReqs = data.requests || [];
+                if(incomingReqs.length > 0 && incomingReqs.length > (currentUser.requests?.length || 0)) {
+                    window.notificationMgr.showNotification({ title: "New Friend Request", message: `${incomingReqs[incomingReqs.length-1]} sent you a request!`, icon: "sparkles" });
+                }
+                currentUser.requests = incomingReqs;
+
+                // Render Friends
+                const flist = document.getElementById('msg-friends-list');
+                flist.innerHTML = "";
+                
+                // Render pending requests
+                incomingReqs.forEach(req => {
+                    flist.innerHTML += `<div class="msg-friend-item" style="background:rgba(234,67,53,0.1)">
+                        <span>${req} (Req)</span>
+                        <button onclick="window.msgAcceptReq('${req}')" style="background:var(--sys-primary); color:#fff; border:none; padding:2px 8px; border-radius:10px;">Accept</button>
+                    </div>`;
+                });
+
+                // Render actual friends
+                (data.friends || []).forEach(friend => {
+                    flist.innerHTML += `<div class="msg-friend-item" onclick="window.msgOpenChat('${friend}')"><span>👤 ${friend}</span></div>`;
+                });
+            });
+        }
+
+        window.msgAcceptReq = async function(reqName) {
+            await updateDoc(doc(db, "users", currentUser.uid), { friends: arrayUnion(reqName), requests: [] });
+            // Since we can't easily query the other user's doc by name to update theirs without cloud functions,
+            // we do a quick query hack.
+            const q = query(collection(db, "users"), where("username", "==", reqName));
+            onSnapshot(q, (snap) => {
+                if(!snap.empty) {
+                    updateDoc(doc(db, "users", snap.docs[0].id), { friends: arrayUnion(currentUser.username) });
+                }
+            });
+        }
+
+        window.msgOpenChat = function(friendName) {
+            document.getElementById('msg-current-chat-name').innerText = "Chatting with: " + friendName;
+            // Create a deterministic unique ID for these two users
+            const arr = [currentUser.username, friendName].sort();
+            currentChatId = arr[0] + "_" + arr[1];
+
+            if(activeChatUnsub) activeChatUnsub();
+            
+            const q = query(collection(db, "messages"), where("chatId", "==", currentChatId), orderBy("timestamp", "asc"));
+            activeChatUnsub = onSnapshot(q, (snap) => {
+                const hist = document.getElementById('msg-chat-history');
+                hist.innerHTML = "";
+                snap.forEach(d => {
+                    const msg = d.data();
+                    const isMe = msg.sender === currentUser.username;
+                    hist.innerHTML += `<div class="msg-bubble ${isMe ? 'me' : 'them'}">
+                        <small style="font-size:10px; opacity:0.7;">${msg.sender}</small><br>${msg.text}
+                    </div>`;
+                });
+                hist.scrollTop = hist.scrollHeight;
+            });
+        }
+    </script>
 </body>
 </html>
