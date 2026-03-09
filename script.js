@@ -1,7 +1,7 @@
-// --- 1. Notification System ---
+// --- 1. Notification System (Integrated into QS) ---
 const notificationMgr = {
     showNotification: function({title, message, icon}) {
-        const iconEmoji = icon === 'shield-alert' ? '🛡️' : icon === 'sparkles' ? '✨' : '🚀';
+        const iconEmoji = icon === 'shield-alert' ? '🛡️' : icon === 'sparkles' ? '✨' : '🔔';
         
         // 1. Show floating toast
         const container = document.getElementById('notification-toast-container');
@@ -27,6 +27,8 @@ const notificationMgr = {
     }
 };
 
+window.notificationMgr = notificationMgr; // Expose to global scope for Firebase
+
 function checkEmptyNotifs() {
     const qsList = document.getElementById('qs-notif-list');
     if (qsList.children.length === 0) {
@@ -39,21 +41,13 @@ function triggerInitialNotifications() {
     sessionStorage.setItem('notifs_shown', 'true');
     
     setTimeout(() => {
-        notificationMgr.showNotification({
-            title: "Welcome to Aura OS!",
-            message: "Check out the Settings app to customize your desktop.",
-            icon: "sparkles"
-        });
-    }, 1500);
-
-    setTimeout(() => {
         const firstTuesdayOfDec = 2; // Mar 10th, 2026
         notificationMgr.showNotification({
             title: "System Announcement",
             message: `Safety is coming to Aura OS. You will be flagged if you use swear words or nasty usernames. Coming on March 10th 2026.`,
             icon: "shield-alert"
         });
-    }, 5000);
+    }, 2500);
 }
 
 // --- 2. Boot Sequence & OOBE Setup ---
@@ -330,7 +324,15 @@ function toggleApp(appId) {
     } else openApp(appId);
 }
 
-function bringToFront(elmnt) { highestZ++; elmnt.style.zIndex = highestZ; }
+function bringToFront(elmnt) { 
+    highestZ++; 
+    elmnt.style.zIndex = highestZ; 
+    // IFRAME KEYBOARD FOCUS FIX:
+    const iframe = elmnt.querySelector('iframe');
+    if(iframe && iframe.contentWindow) {
+        iframe.focus();
+    }
+}
 function updateTaskbarIndicator(appId, isActive) {
     const icon = document.querySelector(`button[onclick*="'${appId}'"]`);
     if(icon) isActive ? icon.classList.add('active') : icon.classList.remove('active');
@@ -340,7 +342,8 @@ function updateTaskbarIndicator(appId, isActive) {
 const snapPreview = document.getElementById('snap-preview');
 let currentSnap = null;
 document.querySelectorAll('.window').forEach(win => {
-    dragElement(win); win.addEventListener('mousedown', () => bringToFront(win));
+    dragElement(win); 
+    win.addEventListener('mousedown', () => bringToFront(win));
 });
 
 function dragElement(elmnt) {
@@ -374,7 +377,6 @@ function dragElement(elmnt) {
     }
 }
 
-// Draggable Desktop Icons Logic
 function dragDesktopIcon(elmnt) {
     let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
     elmnt.onmousedown = dragMouseDown;
