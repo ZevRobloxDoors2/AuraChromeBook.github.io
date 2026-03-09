@@ -31,16 +31,9 @@
 body, html { margin: 0; padding: 0; height: 100%; font-family: 'Google Sans', 'Segoe UI', Roboto, sans-serif; overflow: hidden; background-color: #000; color: var(--sys-text); }
 #desktop { height: 100vh; position: relative; background-image: url('https://images.unsplash.com/photo-1506744626753-1fa44df31c22?q=80&w=2000&auto=format&fit=crop'); background-size: cover; background-position: center; transition: filter 0.2s, background-image 0.3s; }
 
-/* Global Image Styling for Icons */
-.app-icon img { width: 24px; height: 24px; pointer-events: none; }
-.desktop-icon img { width: 40px; height: 40px; pointer-events: none; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4)); }
-.store-icon img { width: 48px; height: 48px; }
-.l-icon img { width: 32px; height: 32px; }
-.win-title-icon { width: 16px; height: 16px; vertical-align: middle; margin-right: 6px; }
-.ctx-icon { width: 16px; height: 16px; vertical-align: middle; margin-right: 8px; }
-
 /* Boot Screen */
 #boot-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #202124; z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; transition: opacity 0.5s ease-out; }
+.boot-logo { animation: pulse 1.5s infinite; }
 .boot-loader { margin-top: 30px; width: 100px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; position: relative; overflow: hidden; }
 .boot-loader::after { content: ''; position: absolute; left: -50px; top: 0; height: 100%; width: 50px; background: #8ab4f8; animation: slide 1.5s infinite ease-in-out; }
 @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
@@ -55,7 +48,7 @@ body, html { margin: 0; padding: 0; height: 100%; font-family: 'Google Sans', 'S
 .welcome-box button { margin-top: 20px; background: var(--sys-primary); color: white; border: none; padding: 12px 30px; border-radius: var(--radius-full); font-size: 16px; cursor: pointer; font-weight: bold; transition: 0.2s; }
 .welcome-box button:hover { filter: brightness(1.1); transform: scale(1.05); }
 
-/* Notification Toasts */
+/* Notification Toasts (Bottom Right) */
 #notification-toast-container { position: absolute; bottom: 70px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 10000; pointer-events: none; }
 .notification { width: 320px; background: var(--sys-surface); color: var(--sys-text); backdrop-filter: var(--sys-blur); border-radius: var(--radius-md); padding: 15px; display: flex; align-items: flex-start; gap: 15px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); border: 1px solid var(--sys-border); animation: slideInRight 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); pointer-events: auto; transition: opacity 0.3s; }
 .notif-icon { font-size: 24px; }
@@ -68,7 +61,7 @@ body, html { margin: 0; padding: 0; height: 100%; font-family: 'Google Sans', 'S
 .setup-card { background: var(--sys-surface); width: 450px; min-height: 350px; border-radius: var(--radius-lg); box-shadow: 0 12px 40px rgba(0,0,0,0.3); padding: 40px; position: relative; overflow: hidden; border: 1px solid var(--sys-border); }
 .setup-step { display: none; flex-direction: column; align-items: center; text-align: center; animation: fadeIn 0.4s ease-out forwards; }
 .setup-step.active { display: flex; }
-.setup-icon-img { width: 64px; margin-bottom: 20px; }
+.setup-icon { font-size: 48px; margin-bottom: 20px; }
 .setup-title { margin: 0 0 10px 0; font-size: 24px; font-weight: 500; color: var(--sys-text); }
 .setup-text { margin: 0 0 30px 0; font-size: 14px; color: var(--sys-text-muted); line-height: 1.5; }
 .setup-input { width: 100%; padding: 15px; border-radius: var(--radius-md); border: 2px solid var(--sys-border); background: transparent; color: var(--sys-text); outline: none; font-size: 16px; margin-bottom: 25px; transition: border 0.2s; box-sizing: border-box; }
@@ -83,6 +76,7 @@ body, html { margin: 0; padding: 0; height: 100%; font-family: 'Google Sans', 'S
 /* Lock Screen */
 #lock-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--sys-base); backdrop-filter: var(--sys-blur); z-index: 99997; display: flex; justify-content: center; align-items: center; }
 .lock-box { background: var(--sys-surface); padding: 40px; border-radius: var(--radius-lg); text-align: center; color: var(--sys-text); box-shadow: 0 8px 32px rgba(0,0,0,0.5); width: 300px; border: 1px solid var(--sys-border); }
+.lock-box .avatar { font-size: 64px; margin-bottom: 10px; }
 .lock-box h2 { margin: 0 0 20px 0; font-weight: 500; font-size: 20px; }
 .lock-box input { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: var(--radius-full); border: none; outline: none; background: rgba(100,100,100,0.1); color: var(--sys-text); text-align: center; font-size: 16px; box-sizing: border-box; }
 .lock-box button { background: var(--sys-primary); color: #fff; border: none; width: 48px; height: 48px; border-radius: 50%; cursor: pointer; font-size: 20px; transition: 0.2s; font-weight: bold; }
@@ -99,6 +93,7 @@ body, html { margin: 0; padding: 0; height: 100%; font-family: 'Google Sans', 'S
 /* Draggable Desktop Icons */
 .desktop-icon { position: absolute; width: 80px; text-align: center; color: white; cursor: move; border-radius: var(--radius-sm); padding: 10px 5px; transition: background 0.2s; user-select: none; z-index: 1; }
 .desktop-icon:hover { background: rgba(255, 255, 255, 0.2); }
+.desktop-icon .icon-emoji { font-size: 36px; text-shadow: 0 2px 5px rgba(0,0,0,0.5); pointer-events: none; }
 .desktop-icon .icon-text { font-size: 12px; font-weight: 500; text-shadow: 0 1px 3px rgba(0,0,0,0.8); margin-top: 5px; pointer-events: none; }
 
 /* Window Manager & Maximizing */
@@ -119,8 +114,8 @@ body, html { margin: 0; padding: 0; height: 100%; font-family: 'Google Sans', 'S
 .file-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 15px; }
 .file-item { text-align: center; padding: 10px; border-radius: var(--radius-sm); cursor: pointer; transition: 0.2s; border: 1px solid transparent; }
 .file-item:hover { background: rgba(128,128,128,0.1); border-color: var(--sys-border); }
-.file-item img { width: 42px; margin-bottom: 5px; pointer-events: none; }
-.file-item span { font-size: 12px; color: var(--sys-text); word-break: break-all; pointer-events: none; }
+.file-item .f-icon { font-size: 42px; margin-bottom: 5px; }
+.file-item span { font-size: 12px; color: var(--sys-text); word-break: break-all; }
 
 /* Messaging App Styles */
 .msg-app-bg { background: var(--sys-surface); }
@@ -157,7 +152,7 @@ body, html { margin: 0; padding: 0; height: 100%; font-family: 'Google Sans', 'S
 .launcher-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; overflow-y: auto; padding: 10px; }
 .launcher-item { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; padding: 10px; border-radius: var(--radius-sm); transition: 0.2s; }
 .launcher-item:hover { background: rgba(128,128,128,0.1); }
-.l-icon { background: rgba(128,128,128,0.05); width: 56px; height: 56px; display: flex; justify-content: center; align-items: center; border-radius: 50%; }
+.l-icon { font-size: 32px; background: rgba(128,128,128,0.05); width: 56px; height: 56px; display: flex; justify-content: center; align-items: center; border-radius: 50%; }
 .l-text { font-size: 12px; font-weight: 500; text-align: center; }
 
 /* Quick Settings & Integrated Notification Center */
@@ -191,13 +186,13 @@ body, html { margin: 0; padding: 0; height: 100%; font-family: 'Google Sans', 'S
 
 /* Taskbar */
 #taskbar-container { position: absolute; bottom: 8px; width: 100%; display: flex; justify-content: center; z-index: 9999; }
-#taskbar { height: 48px; background: var(--sys-base); display: flex; align-items: center; padding: 0 8px; backdrop-filter: var(--sys-blur); border-radius: var(--radius-full); color: var(--sys-text); gap: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border: 1px solid var(--sys-border); }
+#taskbar { height: 48px; background-color: var(--sys-base); display: flex; align-items: center; padding: 0 8px; backdrop-filter: var(--sys-blur); border-radius: var(--radius-full); color: var(--sys-text); gap: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border: 1px solid var(--sys-border); }
 #launcher-btn { background: rgba(128,128,128,0.15); border: none; border-radius: 50%; width: 36px; height: 36px; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: 0.2s; margin-right: 8px; }
 #launcher-btn:hover { background: rgba(128,128,128,0.25); }
 .launcher-dot { width: 16px; height: 16px; border: 3px solid var(--sys-text); border-radius: 50%; }
 
 #app-icons { display: flex; gap: 8px; justify-content: center; }
-.app-icon { background: transparent; border: none; border-radius: 50%; width: 36px; height: 36px; cursor: pointer; transition: 0.2s; position: relative; display: flex; align-items: center; justify-content: center; }
+.app-icon { background: transparent; border: none; border-radius: 50%; width: 36px; height: 36px; font-size: 20px; cursor: pointer; transition: 0.2s; position: relative; }
 .app-icon:hover { background: rgba(128,128,128,0.15); }
 .app-icon.active::after { content: ''; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%); width: 12px; height: 3px; background: var(--sys-primary); border-radius: 2px; }
 .app-icon.dragging-icon { opacity: 0.4; }
@@ -215,7 +210,7 @@ body, html { margin: 0; padding: 0; height: 100%; font-family: 'Google Sans', 'S
 .modern-btn { background: var(--sys-primary); color: white; border: none; padding: 10px 20px; border-radius: var(--radius-full); cursor: pointer; font-weight: 500; transition: 0.2s; font-family: inherit; }
 .modern-btn:hover { filter: brightness(1.1); }
 
-/* Play Store Redesign */
+/* Play Store */
 .play-header { display: flex; align-items: center; justify-content: space-between; padding: 15px 25px; border-bottom: 1px solid var(--sys-border); background: var(--sys-surface); }
 .play-logo { font-size: 20px; color: #ea4335; font-weight: bold; display: flex; align-items: center; gap: 8px; }
 .play-logo span { color: var(--sys-text); font-weight: 500; font-size: 18px; }
@@ -229,6 +224,7 @@ body, html { margin: 0; padding: 0; height: 100%; font-family: 'Google Sans', 'S
 .store-tab-content.active { display: block; }
 .store-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 20px; }
 .store-card { background: rgba(128,128,128,0.05); display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--sys-border); transition: 0.2s; }
+.store-icon { font-size: 42px; margin-bottom: 10px; width: 80px; height: 80px; display: flex; justify-content: center; align-items: center; background: rgba(128,128,128,0.1); border-radius: 20px; }
 .store-info { flex-grow: 1; margin-bottom: 12px; width: 100%; }
 .store-info strong { display: block; font-size: 13px; color: var(--sys-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .store-info span { font-size: 11px; color: var(--sys-text-muted); display: block; margin-top: 4px; }
@@ -240,7 +236,7 @@ body, html { margin: 0; padding: 0; height: 100%; font-family: 'Google Sans', 'S
 /* Custom App Specific overrides */
 .store-bg { background: var(--sys-surface) !important; }
 .browser-toolbar { display: flex; padding: 8px; background: var(--sys-surface); border-bottom: 1px solid var(--sys-border); gap: 8px; }
-.browser-toolbar button { background: transparent; border: none; padding: 0 10px; height: 32px; border-radius: var(--radius-full); cursor: pointer; font-size: 13px; color: var(--sys-text); font-weight: 500; }
+.browser-toolbar button { background: transparent; border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 14px; color: var(--sys-text); }
 .browser-toolbar button:hover { background: rgba(128,128,128,0.1); }
 .browser-toolbar input { flex-grow: 1; padding: 0 16px; border-radius: var(--radius-full); border: none; background: rgba(128,128,128,0.1); color: var(--sys-text); outline: none; font-size: 13px; }
 .calc-bg { background: var(--sys-surface); padding: 15px; }
