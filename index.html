@@ -96,8 +96,7 @@
             <div class="window-header" id="files-window-header"><span class="window-title">📁 Files</span><div><button class="win-btn" onclick="minimizeApp('files-window')">−</button><button class="win-btn" onclick="maximizeApp('files-window')">□</button><button class="win-btn close-btn" onclick="closeApp('files-window')">✕</button></div></div>
             <div class="window-content" style="padding: 20px;">
                 <p style="margin-top: 0; color: var(--sys-text-muted); font-size: 13px;">My Device / Local Storage</p>
-                <div id="file-explorer-grid" class="file-grid">
-                    </div>
+                <div id="file-explorer-grid" class="file-grid"></div>
             </div>
         </div>
 
@@ -114,10 +113,28 @@
             <div class="window-content"><div id="wordpad-editor" contenteditable="true" placeholder="Start typing here..." style="padding: 20px; outline: none; height: 100%;"></div></div>
         </div>
 
+        <div class="window" id="calc-window" style="display: none; width: 320px; height: 480px;">
+            <div class="window-header" id="calc-window-header"><span class="window-title">🧮 Calculator</span><div><button class="win-btn" onclick="minimizeApp('calc-window')">−</button><button class="win-btn" onclick="maximizeApp('calc-window')">□</button><button class="win-btn close-btn" onclick="closeApp('calc-window')">✕</button></div></div>
+            <div class="window-content calc-bg">
+                <input type="text" id="calc-display" disabled value="0">
+                <div class="calc-grid">
+                    <button class="calc-btn span-2 action-light" onclick="calcClear()">C</button>
+                    <button class="calc-btn action-light" onclick="calcPress('/')">÷</button>
+                    <button class="calc-btn action-light" onclick="calcPress('*')">×</button>
+                    <button class="calc-btn" onclick="calcPress('7')">7</button><button class="calc-btn" onclick="calcPress('8')">8</button><button class="calc-btn" onclick="calcPress('9')">9</button>
+                    <button class="calc-btn action-light" onclick="calcPress('-')">−</button>
+                    <button class="calc-btn" onclick="calcPress('4')">4</button><button class="calc-btn" onclick="calcPress('5')">5</button><button class="calc-btn" onclick="calcPress('6')">6</button>
+                    <button class="calc-btn action-light" onclick="calcPress('+')">+</button>
+                    <button class="calc-btn" onclick="calcPress('1')">1</button><button class="calc-btn" onclick="calcPress('2')">2</button><button class="calc-btn" onclick="calcPress('3')">3</button>
+                    <button class="calc-btn action-blue" onclick="calcEval()" style="grid-row: span 2;">=</button>
+                    <button class="calc-btn span-2" onclick="calcPress('0')">0</button><button class="calc-btn" onclick="calcPress('.')">.</button>
+                </div>
+            </div>
+        </div>
+
         <div class="window" id="messages-window" style="display: none; width: 800px; height: 500px;">
             <div class="window-header" id="messages-window-header"><span class="window-title">💬 Aura Messages</span><div><button class="win-btn" onclick="minimizeApp('messages-window')">−</button><button class="win-btn" onclick="maximizeApp('messages-window')">□</button><button class="win-btn close-btn" onclick="closeApp('messages-window')">✕</button></div></div>
             <div class="window-content msg-app-bg">
-                
                 <div id="msg-auth-view" class="msg-view active">
                     <div class="msg-auth-card">
                         <h2>Aura Messages</h2>
@@ -142,24 +159,13 @@
 
                 <div id="msg-main-view" class="msg-view" style="flex-direction: row; height: 100%;">
                     <div class="msg-sidebar">
-                        <div class="msg-sidebar-header">
-                            <span id="msg-my-name" style="font-weight: bold;">User</span>
-                            <button onclick="window.msgLogout()" style="background: transparent; border: none; color: var(--sys-text-muted); cursor: pointer;">Logout</button>
-                        </div>
-                        <div class="msg-add-friend">
-                            <input type="text" id="msg-add-input" placeholder="Add Friend (Username)">
-                            <button onclick="window.msgAddFriend()">+</button>
-                        </div>
-                        <div class="msg-friends-list" id="msg-friends-list">
-                            </div>
+                        <div class="msg-sidebar-header"><span id="msg-my-name" style="font-weight: bold;">User</span><button onclick="window.msgLogout()" style="background: transparent; border: none; color: var(--sys-text-muted); cursor: pointer;">Logout</button></div>
+                        <div class="msg-add-friend"><input type="text" id="msg-add-input" placeholder="Add Friend (Username)"><button onclick="window.msgAddFriend()">+</button></div>
+                        <div class="msg-friends-list" id="msg-friends-list"></div>
                     </div>
                     <div class="msg-chat-area">
-                        <div class="msg-chat-header">
-                            <span id="msg-current-chat-name">Select a friend to chat</span>
-                            <button class="msg-report-btn" onclick="alert('User reported. Our safety team will review this chat.')">🚩 Report</button>
-                        </div>
-                        <div class="msg-chat-history" id="msg-chat-history">
-                            </div>
+                        <div class="msg-chat-header"><span id="msg-current-chat-name">Select a friend to chat</span><button class="msg-report-btn" onclick="alert('User reported. Our safety team will review this chat.')">🚩 Report</button></div>
+                        <div class="msg-chat-history" id="msg-chat-history"></div>
                         <div class="msg-chat-input">
                             <button class="msg-img-btn" onclick="alert('Coming Soon')">📷</button>
                             <input type="text" id="msg-text-input" placeholder="Message..." onkeypress="if(event.key === 'Enter') window.msgSend()">
@@ -167,7 +173,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
 
@@ -208,13 +213,14 @@
 
                 <h3 class="settings-title">System Updates</h3>
                 <div class="settings-card">
-                    <strong style="display: block; margin-bottom: 5px;">Version 3.0 (Latest)</strong>
+                    <strong style="display: block; margin-bottom: 5px;">Version 3.5 (Latest)</strong>
                     <ul style="font-size: 13px; color: var(--sys-text-muted); margin-top: 0; margin-bottom: 15px; padding-left: 20px;">
-                        <li>Safety Era Updates</li>
+                        <li>Added Smash Carts game to App Store</li>
+                        <li>Fixed keyboard/mouse support (WASD) for 3D games</li>
+                        <li>Safety Era Updates & Notifications</li>
                         <li>File Explorer & Notepad Saving</li>
                         <li>Aura Messages App (Firebase Integrated)</li>
                         <li>Window Maximizing & Uninstalling Apps</li>
-                        <li>Draggable Desktop Icons & Dark Mode</li>
                     </ul>
                     <button onclick="alert('Your system is up to date!')" class="modern-btn">Check for Updates</button>
                 </div>
@@ -243,6 +249,8 @@
                 <div id="store-games-tab" class="store-tab-content active">
                     <h2 class="play-section-title">Recommended for you</h2>
                     <div class="store-grid">
+                        <div class="store-card"><div class="store-icon">🏎️</div><div class="store-info"><strong>Smash Carts</strong><span>Action • 4.8 ★</span></div><button id="install-btn-smashcarts-window" class="store-btn" onclick="installApp('smashcarts-window', '🏎️', 'Smash Carts', this)">Install</button><div class="progress-container" id="progress-container-smashcarts-window"><div class="progress-bar" id="progress-bar-smashcarts-window"></div></div></div>
+
                         <div class="store-card"><div class="store-icon">🐻</div><div class="store-info"><strong>Five Nights</strong><span>Action • 4.5 ★</span></div><button id="install-btn-fnae-window" class="store-btn" onclick="installApp('fnae-window', '🐻', 'Five Nights', this)">Install</button><div class="progress-container" id="progress-container-fnae-window"><div class="progress-bar" id="progress-bar-fnae-window"></div></div></div>
                         <div class="store-card"><div class="store-icon">⛏️</div><div class="store-info"><strong>Eaglercraft</strong><span>Adventure • 4.8 ★</span></div><button id="install-btn-eaglercraft-window" class="store-btn" onclick="installApp('eaglercraft-window', '⛏️', 'Eaglercraft', this)">Install</button><div class="progress-container" id="progress-container-eaglercraft-window"><div class="progress-bar" id="progress-bar-eaglercraft-window"></div></div></div>
                         <div class="store-card"><div class="store-icon">👵</div><div class="store-info"><strong>Granny</strong><span>Horror • 4.3 ★</span></div><button id="install-btn-granny-window" class="store-btn" onclick="installApp('granny-window', '👵', 'Granny', this)">Install</button><div class="progress-container" id="progress-container-granny-window"><div class="progress-bar" id="progress-bar-granny-window"></div></div></div>
@@ -269,19 +277,20 @@
             </div>
         </div>
 
-        <div class="window" id="auraflix-window" style="display: none; width: 900px; height: 600px;"><div class="window-header" id="auraflix-window-header"><span class="window-title">🎬 AuraFlix</span><div><button class="win-btn" onclick="minimizeApp('auraflix-window')">−</button><button class="win-btn" onclick="maximizeApp('auraflix-window')">□</button><button class="win-btn close-btn" onclick="closeApp('auraflix-window')">✕</button></div></div><div class="window-content"><iframe data-src="Apps/AuraFlix.html" src="" width="100%" height="100%" frameborder="0"></iframe></div></div>
-        <div class="window" id="auramusic-window" style="display: none; width: 600px; height: 500px;"><div class="window-header" id="auramusic-window-header"><span class="window-title">🎵 Aura Music</span><div><button class="win-btn" onclick="minimizeApp('auramusic-window')">−</button><button class="win-btn" onclick="maximizeApp('auramusic-window')">□</button><button class="win-btn close-btn" onclick="closeApp('auramusic-window')">✕</button></div></div><div class="window-content"><iframe data-src="Apps/AuraOS Music.html" src="" width="100%" height="100%" frameborder="0"></iframe></div></div>
-        <div class="window" id="discord-window" style="display: none; width: 900px; height: 600px;"><div class="window-header" id="discord-window-header"><span class="window-title">💬 Discord</span><div><button class="win-btn" onclick="minimizeApp('discord-window')">−</button><button class="win-btn" onclick="maximizeApp('discord-window')">□</button><button class="win-btn close-btn" onclick="closeApp('discord-window')">✕</button></div></div><div class="window-content"><iframe data-src="Apps/discord.html" src="" width="100%" height="100%" frameborder="0"></iframe></div></div>
-
-        <div class="window" id="fnae-window" style="display: none; width: 800px; height: 600px;"><div class="window-header" id="fnae-window-header"><span class="window-title">🐻 Five Nights</span><div><button class="win-btn" onclick="minimizeApp('fnae-window')">−</button><button class="win-btn" onclick="maximizeApp('fnae-window')">□</button><button class="win-btn close-btn" onclick="closeApp('fnae-window')">✕</button></div></div><div class="window-content"><iframe data-src="Games/Five Nights at Epstein's.html" src="" width="100%" height="100%" frameborder="0"></iframe></div></div>
-        <div class="window" id="eaglercraft-window" style="display: none; width: 800px; height: 600px;"><div class="window-header" id="eaglercraft-window-header"><span class="window-title">⛏️ Eaglercraft</span><div><button class="win-btn" onclick="minimizeApp('eaglercraft-window')">−</button><button class="win-btn" onclick="maximizeApp('eaglercraft-window')">□</button><button class="win-btn close-btn" onclick="closeApp('eaglercraft-window')">✕</button></div></div><div class="window-content"><iframe data-src="Games/Eaglercraft.html" src="" width="100%" height="100%" frameborder="0"></iframe></div></div>
-        <div class="window" id="granny-window" style="display: none; width: 800px; height: 600px;"><div class="window-header" id="granny-window-header"><span class="window-title">👵 Granny</span><div><button class="win-btn" onclick="minimizeApp('granny-window')">−</button><button class="win-btn" onclick="maximizeApp('granny-window')">□</button><button class="win-btn close-btn" onclick="closeApp('granny-window')">✕</button></div></div><div class="window-content"><iframe data-src="Games/Granny.html" src="" width="100%" height="100%" frameborder="0"></iframe></div></div>
-        <div class="window" id="escaperoad-window" style="display: none; width: 800px; height: 600px;"><div class="window-header" id="escaperoad-window-header"><span class="window-title">🚗 Escape Road</span><div><button class="win-btn" onclick="minimizeApp('escaperoad-window')">−</button><button class="win-btn" onclick="maximizeApp('escaperoad-window')">□</button><button class="win-btn close-btn" onclick="closeApp('escaperoad-window')">✕</button></div></div><div class="window-content"><iframe data-src="Games/Escape Road.html" src="" width="100%" height="100%" frameborder="0"></iframe></div></div>
-        <div class="window" id="escaperoad2-window" style="display: none; width: 800px; height: 600px;"><div class="window-header" id="escaperoad2-window-header"><span class="window-title">🏎️ Escape Road 2</span><div><button class="win-btn" onclick="minimizeApp('escaperoad2-window')">−</button><button class="win-btn" onclick="maximizeApp('escaperoad2-window')">□</button><button class="win-btn close-btn" onclick="closeApp('escaperoad2-window')">✕</button></div></div><div class="window-content"><iframe data-src="Games/Escape Road 2.html" src="" width="100%" height="100%" frameborder="0"></iframe></div></div>
-        <div class="window" id="solarsmash-window" style="display: none; width: 800px; height: 600px;"><div class="window-header" id="solarsmash-window-header"><span class="window-title">🪐 Solar Smash</span><div><button class="win-btn" onclick="minimizeApp('solarsmash-window')">−</button><button class="win-btn" onclick="maximizeApp('solarsmash-window')">□</button><button class="win-btn close-btn" onclick="closeApp('solarsmash-window')">✕</button></div></div><div class="window-content"><iframe data-src="Games/Solar Smash.html" src="" width="100%" height="100%" frameborder="0"></iframe></div></div>
-        <div class="window" id="brainrot-window" style="display: none; width: 800px; height: 600px;"><div class="window-header" id="brainrot-window-header"><span class="window-title">🧠 Steal a Brainrot</span><div><button class="win-btn" onclick="minimizeApp('brainrot-window')">−</button><button class="win-btn" onclick="maximizeApp('brainrot-window')">□</button><button class="win-btn close-btn" onclick="closeApp('brainrot-window')">✕</button></div></div><div class="window-content"><iframe data-src="Games/Steal a Brainrot.html" src="" width="100%" height="100%" frameborder="0"></iframe></div></div>
-        <div class="window" id="ragdollhit-window" style="display: none; width: 800px; height: 600px;"><div class="window-header" id="ragdollhit-window-header"><span class="window-title">🥊 Ragdoll Hit</span><div><button class="win-btn" onclick="minimizeApp('ragdollhit-window')">−</button><button class="win-btn" onclick="maximizeApp('ragdollhit-window')">□</button><button class="win-btn close-btn" onclick="closeApp('ragdollhit-window')">✕</button></div></div><div class="window-content"><iframe data-src="Games/Ragdoll Hit.html" src="" width="100%" height="100%" frameborder="0"></iframe></div></div>
-        <div class="window" id="ragdollarchers-window" style="display: none; width: 800px; height: 600px;"><div class="window-header" id="ragdollarchers-window-header"><span class="window-title">🏹 Ragdoll Archers</span><div><button class="win-btn" onclick="minimizeApp('ragdollarchers-window')">−</button><button class="win-btn" onclick="maximizeApp('ragdollarchers-window')">□</button><button class="win-btn close-btn" onclick="closeApp('ragdollarchers-window')">✕</button></div></div><div class="window-content"><iframe data-src="Games/Ragdoll Archers.html" src="" width="100%" height="100%" frameborder="0"></iframe></div></div>
+        <div class="window" id="auraflix-window" style="display: none; width: 900px; height: 600px;"><div class="window-header" id="auraflix-window-header"><span class="window-title">🎬 AuraFlix</span><div><button class="win-btn" onclick="minimizeApp('auraflix-window')">−</button><button class="win-btn" onclick="maximizeApp('auraflix-window')">□</button><button class="win-btn close-btn" onclick="closeApp('auraflix-window')">✕</button></div></div><div class="window-content"><iframe data-src="Apps/AuraFlix.html" src="" width="100%" height="100%" frameborder="0" allow="fullscreen"></iframe></div></div>
+        <div class="window" id="auramusic-window" style="display: none; width: 600px; height: 500px;"><div class="window-header" id="auramusic-window-header"><span class="window-title">🎵 Aura Music</span><div><button class="win-btn" onclick="minimizeApp('auramusic-window')">−</button><button class="win-btn" onclick="maximizeApp('auramusic-window')">□</button><button class="win-btn close-btn" onclick="closeApp('auramusic-window')">✕</button></div></div><div class="window-content"><iframe data-src="Apps/AuraOS Music.html" src="" width="100%" height="100%" frameborder="0" allow="autoplay; fullscreen"></iframe></div></div>
+        
+        <div class="window" id="smashcarts-window" style="display: none; width: 800px; height: 600px;"><div class="window-header" id="smashcarts-window-header"><span class="window-title">🏎️ Smash Carts</span><div><button class="win-btn" onclick="minimizeApp('smashcarts-window')">−</button><button class="win-btn" onclick="maximizeApp('smashcarts-window')">□</button><button class="win-btn close-btn" onclick="closeApp('smashcarts-window')">✕</button></div></div><div class="window-content"><iframe data-src="Games/smash carts.html" src="" width="100%" height="100%" frameborder="0" allow="fullscreen; pointer-lock; keyboard-map;"></iframe></div></div>
+        <div class="window" id="eaglercraft-window" style="display: none; width: 800px; height: 600px;"><div class="window-header" id="eaglercraft-window-header"><span class="window-title">⛏️ Eaglercraft</span><div><button class="win-btn" onclick="minimizeApp('eaglercraft-window')">−</button><button class="win-btn" onclick="maximizeApp('eaglercraft-window')">□</button><button class="win-btn close-btn" onclick="closeApp('eaglercraft-window')">✕</button></div></div><div class="window-content"><iframe data-src="Games/Eaglercraft.html" src="" width="100%" height="100%" frameborder="0" allow="fullscreen; pointer-lock; keyboard-map;"></iframe></div></div>
+        
+        <div class="window" id="fnae-window" style="display: none; width: 800px; height: 600px;"><div class="window-header" id="fnae-window-header"><span class="window-title">🐻 Five Nights</span><div><button class="win-btn" onclick="minimizeApp('fnae-window')">−</button><button class="win-btn" onclick="maximizeApp('fnae-window')">□</button><button class="win-btn close-btn" onclick="closeApp('fnae-window')">✕</button></div></div><div class="window-content"><iframe data-src="Games/Five Nights at Epstein's.html" src="" width="100%" height="100%" frameborder="0" allow="fullscreen; pointer-lock;"></iframe></div></div>
+        <div class="window" id="granny-window" style="display: none; width: 800px; height: 600px;"><div class="window-header" id="granny-window-header"><span class="window-title">👵 Granny</span><div><button class="win-btn" onclick="minimizeApp('granny-window')">−</button><button class="win-btn" onclick="maximizeApp('granny-window')">□</button><button class="win-btn close-btn" onclick="closeApp('granny-window')">✕</button></div></div><div class="window-content"><iframe data-src="Games/Granny.html" src="" width="100%" height="100%" frameborder="0" allow="fullscreen; pointer-lock;"></iframe></div></div>
+        <div class="window" id="escaperoad-window" style="display: none; width: 800px; height: 600px;"><div class="window-header" id="escaperoad-window-header"><span class="window-title">🚗 Escape Road</span><div><button class="win-btn" onclick="minimizeApp('escaperoad-window')">−</button><button class="win-btn" onclick="maximizeApp('escaperoad-window')">□</button><button class="win-btn close-btn" onclick="closeApp('escaperoad-window')">✕</button></div></div><div class="window-content"><iframe data-src="Games/Escape Road.html" src="" width="100%" height="100%" frameborder="0" allow="fullscreen; pointer-lock;"></iframe></div></div>
+        <div class="window" id="escaperoad2-window" style="display: none; width: 800px; height: 600px;"><div class="window-header" id="escaperoad2-window-header"><span class="window-title">🏎️ Escape Road 2</span><div><button class="win-btn" onclick="minimizeApp('escaperoad2-window')">−</button><button class="win-btn" onclick="maximizeApp('escaperoad2-window')">□</button><button class="win-btn close-btn" onclick="closeApp('escaperoad2-window')">✕</button></div></div><div class="window-content"><iframe data-src="Games/Escape Road 2.html" src="" width="100%" height="100%" frameborder="0" allow="fullscreen; pointer-lock;"></iframe></div></div>
+        <div class="window" id="solarsmash-window" style="display: none; width: 800px; height: 600px;"><div class="window-header" id="solarsmash-window-header"><span class="window-title">🪐 Solar Smash</span><div><button class="win-btn" onclick="minimizeApp('solarsmash-window')">−</button><button class="win-btn" onclick="maximizeApp('solarsmash-window')">□</button><button class="win-btn close-btn" onclick="closeApp('solarsmash-window')">✕</button></div></div><div class="window-content"><iframe data-src="Games/Solar Smash.html" src="" width="100%" height="100%" frameborder="0" allow="fullscreen; pointer-lock;"></iframe></div></div>
+        <div class="window" id="brainrot-window" style="display: none; width: 800px; height: 600px;"><div class="window-header" id="brainrot-window-header"><span class="window-title">🧠 Steal a Brainrot</span><div><button class="win-btn" onclick="minimizeApp('brainrot-window')">−</button><button class="win-btn" onclick="maximizeApp('brainrot-window')">□</button><button class="win-btn close-btn" onclick="closeApp('brainrot-window')">✕</button></div></div><div class="window-content"><iframe data-src="Games/Steal a Brainrot.html" src="" width="100%" height="100%" frameborder="0" allow="fullscreen; pointer-lock;"></iframe></div></div>
+        <div class="window" id="ragdollhit-window" style="display: none; width: 800px; height: 600px;"><div class="window-header" id="ragdollhit-window-header"><span class="window-title">🥊 Ragdoll Hit</span><div><button class="win-btn" onclick="minimizeApp('ragdollhit-window')">−</button><button class="win-btn" onclick="maximizeApp('ragdollhit-window')">□</button><button class="win-btn close-btn" onclick="closeApp('ragdollhit-window')">✕</button></div></div><div class="window-content"><iframe data-src="Games/Ragdoll Hit.html" src="" width="100%" height="100%" frameborder="0" allow="fullscreen; pointer-lock;"></iframe></div></div>
+        <div class="window" id="ragdollarchers-window" style="display: none; width: 800px; height: 600px;"><div class="window-header" id="ragdollarchers-window-header"><span class="window-title">🏹 Ragdoll Archers</span><div><button class="win-btn" onclick="minimizeApp('ragdollarchers-window')">−</button><button class="win-btn" onclick="maximizeApp('ragdollarchers-window')">□</button><button class="win-btn close-btn" onclick="closeApp('ragdollarchers-window')">✕</button></div></div><div class="window-content"><iframe data-src="Games/Ragdoll Archers.html" src="" width="100%" height="100%" frameborder="0" allow="fullscreen; pointer-lock;"></iframe></div></div>
     </div>
 
     <div id="notification-toast-container"></div>
@@ -377,7 +386,6 @@
                 await setDoc(doc(db, "users", cred.user.uid), { username: u, friends: [], requests: [] });
                 err.style.display="none";
                 
-                // Show Warning for new accounts
                 document.querySelectorAll('.msg-view').forEach(v => v.classList.remove('active'));
                 document.getElementById('msg-warning-view').classList.add('active');
             } catch(e) { err.innerText = "Username may already exist."; err.style.display="block"; }
@@ -417,7 +425,6 @@
             input.value = "";
         }
 
-        // Auth State Observer
         if(auth) {
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
@@ -426,7 +433,6 @@
                         currentUser = Object.assign({uid: user.uid}, uDoc.data());
                         document.getElementById('msg-my-name').innerText = currentUser.username;
                         
-                        // Default to main view (bypass warning if returning)
                         if(document.getElementById('msg-warning-view').classList.contains('active') === false) {
                             document.querySelectorAll('.msg-view').forEach(v => v.classList.remove('active'));
                             document.getElementById('msg-main-view').classList.add('active');
@@ -447,18 +453,15 @@
                 const data = docSnap.data();
                 if(!data) return;
                 
-                // Check new requests
                 const incomingReqs = data.requests || [];
                 if(incomingReqs.length > 0 && incomingReqs.length > (currentUser.requests?.length || 0)) {
                     window.notificationMgr.showNotification({ title: "New Friend Request", message: `${incomingReqs[incomingReqs.length-1]} sent you a request!`, icon: "sparkles" });
                 }
                 currentUser.requests = incomingReqs;
 
-                // Render Friends
                 const flist = document.getElementById('msg-friends-list');
                 flist.innerHTML = "";
                 
-                // Render pending requests
                 incomingReqs.forEach(req => {
                     flist.innerHTML += `<div class="msg-friend-item" style="background:rgba(234,67,53,0.1)">
                         <span>${req} (Req)</span>
@@ -466,7 +469,6 @@
                     </div>`;
                 });
 
-                // Render actual friends
                 (data.friends || []).forEach(friend => {
                     flist.innerHTML += `<div class="msg-friend-item" onclick="window.msgOpenChat('${friend}')"><span>👤 ${friend}</span></div>`;
                 });
@@ -475,8 +477,6 @@
 
         window.msgAcceptReq = async function(reqName) {
             await updateDoc(doc(db, "users", currentUser.uid), { friends: arrayUnion(reqName), requests: [] });
-            // Since we can't easily query the other user's doc by name to update theirs without cloud functions,
-            // we do a quick query hack.
             const q = query(collection(db, "users"), where("username", "==", reqName));
             onSnapshot(q, (snap) => {
                 if(!snap.empty) {
@@ -487,7 +487,6 @@
 
         window.msgOpenChat = function(friendName) {
             document.getElementById('msg-current-chat-name').innerText = "Chatting with: " + friendName;
-            // Create a deterministic unique ID for these two users
             const arr = [currentUser.username, friendName].sort();
             currentChatId = arr[0] + "_" + arr[1];
 
