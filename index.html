@@ -77,6 +77,34 @@
     </div>
 
     <div id="desktop">
+        <div class="window" id="taskmgr-window" style="display: none; width: 400px; height: 500px; z-index: 100;">
+            <div class="window-header" id="taskmgr-window-header">
+                <span class="window-title">📊 Task Manager</span>
+                <div>
+                    <button class="win-btn" onclick="minimizeApp('taskmgr-window')">−</button>
+                    <button class="win-btn close-btn" onclick="closeApp('taskmgr-window')">✕</button>
+                </div>
+            </div>
+            <div class="window-content" style="padding: 10px; background: var(--sys-bg);">
+                <p style="font-size: 12px; color: var(--sys-text-muted);">Select an app to force quit.</p>
+                <div id="taskmgr-list" style="display: flex; flex-direction: column; gap: 5px;">
+                    </div>
+            </div>
+        </div>
+
+        <div class="window" id="1v1lol-window" style="display: none; width: 800px; height: 600px;">
+            <div class="window-header" id="1v1lol-window-header">
+                <span class="window-title">🔫 1v1 LOL</span>
+                <div>
+                    <button class="win-btn" onclick="minimizeApp('1v1lol-window')">−</button>
+                    <button class="win-btn" onclick="maximizeApp('1v1lol-window')">□</button>
+                    <button class="win-btn close-btn" onclick="closeApp('1v1lol-window')">✕</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <iframe data-src="Games/1v1 LOL.html" src="" width="100%" height="100%" frameborder="0" allow="fullscreen; pointer-lock;"></iframe>
+            </div>
+        </div>
         <div id="context-menu" style="display: none;">
             <div class="context-item" onclick="location.reload()">🔄 Refresh</div>
             <div class="context-item" onclick="openApp('settings-window')">🖼️ Set wallpaper</div>
@@ -143,6 +171,19 @@
         </div>
 
         <div class="window" id="settings-window" style="display: none;">
+            <h3 class="settings-title">Personalization</h3>
+                <div class="settings-card">
+                    <p>Choose a wallpaper (Supports JPG, PNG, GIF):</p>
+                    <input type="file" id="wallpaper-upload" accept="image/png, image/jpeg, image/gif" class="modern-file-input" onchange="handleWallpaperUpload(event)">
+                    
+                    <div style="margin-top: 15px; display: flex; align-items: center; justify-content: space-between;">
+                        <span>Auto Dark/Light Mode</span>
+                        <label class="switch">
+                            <input type="checkbox" id="auto-theme-toggle" onchange="toggleAutoTheme(this)">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
             <div class="window-header" id="settings-window-header"><span class="window-title">⚙️ Settings</span><div><button class="win-btn" onclick="minimizeApp('settings-window')">−</button><button class="win-btn" onclick="maximizeApp('settings-window')">□</button><button class="win-btn close-btn" onclick="closeApp('settings-window')">✕</button></div></div>
             <div class="window-content" style="padding: 20px;">
                 <h3 class="settings-title">Personalization</h3>
@@ -203,6 +244,7 @@
                 <div id="store-games-tab" class="store-tab-content active">
                     <h2 class="play-section-title">Recommended for you</h2>
                     <div class="store-grid">
+                        <div class="store-card"><div class="store-icon">🔫</div><div class="store-info"><strong>1v1 LOL</strong><span>Shooter • 4.8 ★</span></div><button id="install-btn-1v1lol-window" class="store-btn" onclick="installApp('1v1lol-window', '🔫', '1v1 LOL', this)">Install</button></div>
                         <div class="store-card"><div class="store-icon">🏎️</div><div class="store-info"><strong>Smash Carts</strong><span>Action • 4.8 ★</span></div><button id="install-btn-smashcarts-window" class="store-btn" onclick="installApp('smashcarts-window', '🏎️', 'Smash Carts', this)">Install</button><div class="progress-container" id="progress-container-smashcarts-window"><div class="progress-bar" id="progress-bar-smashcarts-window"></div></div></div>
                         <div class="store-card"><div class="store-icon">🐻</div><div class="store-info"><strong>Five Nights</strong><span>Action • 4.5 ★</span></div><button id="install-btn-fnae-window" class="store-btn" onclick="installApp('fnae-window', '🐻', 'Five Nights', this)">Install</button><div class="progress-container" id="progress-container-fnae-window"><div class="progress-bar" id="progress-bar-fnae-window"></div></div></div>
                         <div class="store-card"><div class="store-icon">⛏️</div><div class="store-info"><strong>Eaglercraft</strong><span>Adventure • 4.8 ★</span></div><button id="install-btn-eaglercraft-window" class="store-btn" onclick="installApp('eaglercraft-window', '⛏️', 'Eaglercraft', this)">Install</button><div class="progress-container" id="progress-container-eaglercraft-window"><div class="progress-bar" id="progress-bar-eaglercraft-window"></div></div></div>
