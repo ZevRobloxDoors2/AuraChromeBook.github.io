@@ -535,3 +535,127 @@ function saveAppToStorage(appId, iconSymbol, appName) {
     let savedApps = JSON.parse(localStorage.getItem('os_installed_apps') || '[]');
     savedApps.push({ id: appId, icon: iconSymbol, name: appName }); localStorage.setItem('os_installed_apps', JSON.stringify(savedApps));
 }
+// ==========================================
+// BATTERY API INTEGRATION
+// ==========================================
+async function initBattery() {
+    const batteryIcon = document.getElementById('taskbar-battery');
+    const qsBatteryText = document.getElementById('qs-battery-text');
+    const qsBatteryIcon = document.getElementById('qs-battery-icon');
+
+    if ('getBattery' in navigator) {
+        try {
+            const battery = await navigator.getBattery();
+            
+            function updateBatteryUI() {
+                const level = Math.round(battery.level * 100);
+                const isCharging = battery.charging;
+                
+                let icon = '🔋';
+                if (isCharging) icon = '⚡';
+                else if (level < 20) icon = '🪫';
+
+                if(batteryIcon) batteryIcon.innerText = `${icon} ${level}%`;
+                if(qsBatteryText) qsBatteryText.innerText = `${level}%`;
+                if(qsBatteryIcon) qsBatteryIcon.innerText = icon;
+            }
+
+            updateBatteryUI();
+            battery.addEventListener('levelchange', updateBatteryUI);
+            battery.addEventListener('chargingchange', updateBatteryUI);
+        } catch (e) {
+            console.log("Battery API restricted.");
+        }
+    }
+}
+
+// Call this when the OS boots up
+initBattery();
+
+
+// ==========================================
+// AUTO DARK/LIGHT MODE
+// ==========================================
+let autoThemeInterval;
+
+function toggleAutoTheme(checkbox) {
+    if (checkbox.checked) {
+        // Enable Auto Theme based on system time/preference
+        autoThemeInterval = setInterval(checkSystemTheme, 60000); // Check every minute
+        checkSystemTheme();
+    } else {
+        // Disable Auto Theme
+        clearInterval(autoThemeInterval);
+    }
+}
+
+function checkSystemTheme() {
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const currentHour = new Date().getHours();
+    
+    // Fallback if browser doesn't report preference: dark mode from 7PM to 7AM
+    const isNightTime = currentHour >= 19 || currentHour < 7; 
+
+    if (prefersDark || isNightTime) {
+        document.body.setAttribute('data-theme', 'dark');
+        document.getElementById('theme-text').innerText = 'Dark Theme';
+    } else {
+        document.body.setAttribute('data-theme', 'light');
+        document.getElementById('theme-text').innerText = 'Light Theme';
+    }
+}
+
+
+// ==========================================
+// TASK MANAGER
+// ==========================================
+// Add 'taskmgr-window' to your launcher search array!
+function populateTaskManager() {
+    const list = document.getElementById('taskmgr-list');
+    list.innerHTML = ''; // Clear current
+    
+    // Find all windows that are currently visible (display: flex or block)
+    const openWindows = document.querySelectorAll('.window');
+    
+    openWindows.forEach(win => {
+        if (win.style.display !== 'none' && win.id !== 'taskmgr-window') {
+            const titleSpan = win.querySelector('.window-title');
+            const title = titleSpan ? titleSpan.innerText : win.id;
+            
+            const item = document.createElement('div');
+            item.style.cssText = "display: flex; justify-content: space-between; padding: 10px; background: var(--sys-surface); border-radius: 5px; border: 1px solid var(--sys-border);";
+            
+            item.innerHTML = `
+                <span>${title}</span>
+                <button onclick="forceQuit('${win.id}')" style="background: #ea4335; color: white; border: none; border-radius: 3px; cursor: pointer; padding: 2px 8px;">Force Quit</button>
+            `;
+            list.appendChild(item);
+        }
+    });
+
+    if (list.innerHTML === '') {
+        list.innerHTML = '<p style="text-align:center; color:gray;">No apps running.</p>';
+    }
+}
+
+function forceQuit(appId) {
+    // Standard close
+    closeApp(appId);
+    
+    // If it's an iframe, forcefully remove its source to kill audio/video running in background
+    const win = document.getElementById(appId);
+    const iframe = win.querySelector('iframe');
+    if (iframe) {
+        iframe.src = ""; 
+    }
+    
+    // Refresh the task manager list
+    populateTaskManager();
+}
+
+// Hook into your existing openApp function to refresh Task Manager if it's open
+const originalOpenApp = openApp;
+openApp = function(appId) {
+    originalOpenApp(appId);
+    if (appId === 'taskmgr-window') populateTaskManager();
+};
