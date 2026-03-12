@@ -638,24 +638,23 @@ function populateTaskManager() {
     }
 }
 
-function forceQuit(appId) {
-    // Standard close
-    closeApp(appId);
+function updateLockScreenWidget() {
+    const now = new Date();
     
-    // If it's an iframe, forcefully remove its source to kill audio/video running in background
-    const win = document.getElementById(appId);
-    const iframe = win.querySelector('iframe');
-    if (iframe) {
-        iframe.src = ""; 
-    }
-    
-    // Refresh the task manager list
-    populateTaskManager();
+    // Format Time (e.g., 10:45)
+    let hours = now.getHours();
+    let minutes = now.getMinutes();
+    let ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    document.getElementById('lock-time').innerText = hours + ':' + minutes;
+
+    // Format Date (e.g., Monday, January 1)
+    const options = { weekday: 'long', month: 'long', day: 'numeric' };
+    document.getElementById('lock-date').innerText = now.toLocaleDateString('en-US', options);
 }
 
-// Hook into your existing openApp function to refresh Task Manager if it's open
-const originalOpenApp = openApp;
-openApp = function(appId) {
-    originalOpenApp(appId);
-    if (appId === 'taskmgr-window') populateTaskManager();
-};
+// Update immediately, then every minute
+updateLockScreenWidget();
+setInterval(updateLockScreenWidget, 60000);
